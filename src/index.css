@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+
+
+body {
+  margin: 0;
+  font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #e0f7fa 0%, #f8f9fa 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+a {
+  text-decoration: none;
+  color: #0a93b0;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #ff6b6b;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.fade-in-down {
+  animation: fadeInDown 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.fade-in-up {
+  animation: fadeInUp 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pulse {
+  animation: pulse 2.5s infinite;
+}

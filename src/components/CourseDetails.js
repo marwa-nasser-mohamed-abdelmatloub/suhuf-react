@@ -1,11 +1,50 @@
 import React from 'react';
-import { Container, Card, Row, Col, Badge } from 'react-bootstrap';
+import { Container, Card, Row, Col, Badge, Button } from 'react-bootstrap';
 import { useTheme } from './shared/ThemeProvider';
 import PrimaryButton from './shared/PrimaryButton';
 import AnimatedTitle from './shared/AnimatedTitle';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CourseDetails = ({ course }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
+
+    const getLevelBadgeVariant = (level) => {
+        switch (level) {
+            case 'beginner':
+                return 'success';
+            case 'intermediate':
+                return 'warning';
+            case 'advanced':
+                return 'danger';
+            default:
+                return 'primary';
+        }
+    };
+
+    const getLevelText = (level) => {
+        switch (level) {
+            case 'beginner':
+                return 'مبتدئ';
+            case 'intermediate':
+                return 'متوسط';
+            case 'advanced':
+                return 'متقدم';
+            default:
+                return level;
+        }
+    };
+
+    const handleBooking = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            // إذا لم يكن مسجل دخول، اذهب لصفحة تسجيل الدخول
+            navigate('/login', { state: { from: { pathname: `/courses/${course.id}` } } });
+        } else {
+            // إذا كان مسجل دخول، يمكن إضافة منطق الحجز هنا
+            alert('سيتم إضافة منطق الحجز قريباً!');
+        }
+    };
 
     if (!course) {
         return (
@@ -17,18 +56,47 @@ const CourseDetails = ({ course }) => {
 
     return (
         <Container className="py-5 course-details" data-aos="fade-in">
+            <div className="text-center mb-4">
+                <Link to="/courses">
+                    <Button 
+                        variant="outline-primary" 
+                        style={{ borderRadius: '25px', padding: '8px 20px' }}
+                    >
+                        ← العودة لصفحة الكورسات
+                    </Button>
+                </Link>
+            </div>
+            
             <Card className="shadow-lg" style={{
                 border: 'none',
                 borderRadius: '15px',
                 overflow: 'hidden',
                 transition: 'all 0.5s ease'
             }}>
+                {course.image && (
+                    <Card.Img 
+                        variant="top" 
+                        src={course.image} 
+                        alt={course.title}
+                        style={{ height: '300px', objectFit: 'cover' }}
+                    />
+                )}
                 <Card.Body>
                     <Row>
                         <Col md={8} data-aos="fade-right">
-                            <AnimatedTitle level={2} style={{ marginBottom: '20px' }}>
-                                {course.title}
-                            </AnimatedTitle>
+                            <div className="d-flex justify-content-between align-items-start mb-3">
+                                <AnimatedTitle level={2} style={{ marginBottom: '0', flex: 1 }}>
+                                    {course.title}
+                                </AnimatedTitle>
+                                <Badge 
+                                    bg={getLevelBadgeVariant(course.level)}
+                                    className="ms-3"
+                                    style={{ fontSize: '0.9rem', padding: '8px 12px' }}
+                                >
+                                    {getLevelText(course.level)}
+                                </Badge>
+                            </div>
+                            
                             <p className="text-muted" style={{
                                 fontSize: '1.1rem',
                                 lineHeight: '1.8',
@@ -36,6 +104,26 @@ const CourseDetails = ({ course }) => {
                             }}>
                                 {course.description}
                             </p>
+                            
+                            <div className="course-info mt-4">
+                                <Row>
+                                    {course.instructor && (
+                                        <Col md={6} className="mb-3">
+                                            <div className="info-item">
+                                                <strong>المدرب:</strong> {course.instructor}
+                                            </div>
+                                        </Col>
+                                    )}
+                                    {course.duration && (
+                                        <Col md={6} className="mb-3">
+                                            <div className="info-item">
+                                                <strong>المدة:</strong> {course.duration}
+                                            </div>
+                                        </Col>
+                                    )}
+                                </Row>
+                            </div>
+                            
                             <div className="course-meta mt-4">
                                 <Badge
                                     pill
@@ -43,19 +131,19 @@ const CourseDetails = ({ course }) => {
                                     style={{
                                         backgroundColor: theme.tertiary,
                                         color: 'white',
-                                        fontSize: '1rem',
-                                        padding: '8px 15px',
+                                        fontSize: '1.1rem',
+                                        padding: '10px 20px',
                                         marginLeft: '10px'
                                     }}
                                 >
-                                    السعر: {course.price}
+                                    السعر: {course.price} ريال
                                 </Badge>
                                 <Badge
                                     pill
                                     style={{
                                         backgroundColor: theme.tertiary,
                                         color: 'white',
-                                        fontSize: '1rem',
+                                        fontSize: '0.9rem',
                                         padding: '8px 15px',
                                         transition: 'all 0.3s ease'
                                     }}
@@ -68,7 +156,7 @@ const CourseDetails = ({ course }) => {
                                         e.currentTarget.style.backgroundColor = theme.tertiary;
                                     }}
                                 >
-                                    تاريخ الإنشاء: {new Date(course.created_at).toLocaleDateString()}
+                                    تاريخ الإنشاء: {new Date(course.created_at).toLocaleDateString('ar-SA')}
                                 </Badge>
                             </div>
                         </Col>
@@ -87,6 +175,7 @@ const CourseDetails = ({ course }) => {
                                             backgroundColor: theme.accent,
                                             borderColor: theme.accent
                                         }}
+                                        onClick={handleBooking}
                                     >
                                         انضم إلى الدورة
                                     </PrimaryButton>
@@ -120,4 +209,5 @@ const CourseDetails = ({ course }) => {
         </Container>
     );
 };
+
 export default CourseDetails;

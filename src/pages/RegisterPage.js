@@ -42,23 +42,34 @@ const RegisterPage = () => {
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
+                password2: formData.password2, // [REHAB] أضفت إرسال تأكيد كلمة المرور
                 full_name: formData.full_name,
                 phone_number: formData.phone_number
             });
-            
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             navigate('/courses', { replace: true });
         } catch (error) {
-            if (error.response?.data?.errors) {
-                const errorMessages = Object.values(error.response.data.errors).flat();
-                setError(errorMessages.join(', '));
-            } else if (error.response?.data?.message) {
-                setError(error.response.data.message);
+            // اطبع كل تفاصيل الخطأ في الكونسول
+            console.error('Registration error:', error);
+            if (error.response && error.response.data) {
+                // اطبع تفاصيل الخطأ في الكونسول
+                console.error('Error response data:', error.response.data);
+                // اعرض الرسالة للمستخدم بشكل واضح
+                if (typeof error.response.data === 'string') {
+                    setError(error.response.data);
+                } else if (error.response.data.message) {
+                    setError(error.response.data.message);
+                } else if (error.response.data.errors) {
+                    const errorMessages = Object.values(error.response.data.errors).flat();
+                    setError(errorMessages.join(', '));
+                } else {
+                    setError(JSON.stringify(error.response.data));
+                }
             } else if (error.message) {
                 setError(error.message);
             } else {
-                setError('خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
+                setError('حدث خطأ غير متوقع');
             }
         } finally {
             setLoading(false);

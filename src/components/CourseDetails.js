@@ -4,6 +4,7 @@ import { useTheme } from './shared/ThemeProvider';
 import PrimaryButton from './shared/PrimaryButton';
 import AnimatedTitle from './shared/AnimatedTitle';
 import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'; // [REHAB] استخدم SweetAlert2
 
 const CourseDetails = ({ course }) => {
     const theme = useTheme();
@@ -38,11 +39,16 @@ const CourseDetails = ({ course }) => {
     const handleBooking = () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            // إذا لم يكن مسجل دخول، اذهب لصفحة تسجيل الدخول
             navigate('/login', { state: { from: { pathname: `/courses/${course.id}` } } });
         } else {
-            // إذا كان مسجل دخول، يمكن إضافة منطق الحجز هنا
-            alert('سيتم إضافة منطق الحجز قريباً!');
+            // [REHAB] استخدم SweetAlert2 بدلاً من alert
+            Swal.fire({
+                title: 'قريباً!',
+                text: 'سيتم إضافة منطق الحجز قريباً!',
+                icon: 'info',
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: '#8e24aa'
+            });
         }
     };
 

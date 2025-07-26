@@ -11,7 +11,7 @@ const api = axios.create({
     }
 });
 
-// [AMS]:- Add request interceptor to include token
+// [Rehab]:- Add request interceptor to include token
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -28,7 +28,7 @@ api.interceptors.request.use(
     }
 );
 
-// [AMS]:- Add response interceptor to handle errors
+// [Rehab]:- Add response interceptor to handle errors
 api.interceptors.response.use(
     (response) => {
         console.log('Response:', response.status, response.config.url);
@@ -106,7 +106,7 @@ export const fetchCourseDetails = async (id) => {
     }
 };
 
-// [AMS]:- Authentication API functions
+// [Rehab]:- Authentication API functions
 export const loginUser = async (credentials) => {
     try {
         const response = await api.post('/accounts/login/', credentials);

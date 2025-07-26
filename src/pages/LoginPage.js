@@ -34,7 +34,12 @@ const LoginPage = () => {
             const data = await loginUser(formData);
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            navigate(from, { replace: true });
+            // [REHAB] إذا كان المستخدم أدمن، redirect للداشبورد
+            if (data.user && (data.user.is_staff || data.user.is_superuser)) {
+                navigate('/admin-dashboard');
+            } else {
+                navigate(from, { replace: true });
+            }
         } catch (error) {
             if (error.response?.data?.message) {
                 setError(error.response.data.message);

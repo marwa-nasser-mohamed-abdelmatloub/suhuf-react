@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import CourseCard from './CourseCard';
-import AnimatedTitle from './shared/AnimatedTitle';
+import AnimatedTitle from '../shared/AnimatedTitle';
 
 const CourseList = ({ courses }) => {
     return (

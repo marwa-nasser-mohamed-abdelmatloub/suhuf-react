@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Badge } from 'react-bootstrap';
-import { useTheme } from './shared/ThemeProvider';
-import PrimaryButton from './shared/PrimaryButton';
-import AnimatedTitle from './shared/AnimatedTitle';
+import { useTheme } from '../shared/ThemeProvider';
+import PrimaryButton from '../shared/PrimaryButton';
+import AnimatedTitle from '../shared/AnimatedTitle';
 
 const CourseCard = ({ course }) => {
     const theme = useTheme();

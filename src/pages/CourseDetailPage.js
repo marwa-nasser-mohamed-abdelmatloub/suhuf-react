@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchCourseDetails } from '../services/api';
-import CourseDetails from '../components/CourseDetails';
+import CourseDetails from '../components/courses/CourseDetails';
 import { Container, Spinner, Alert } from 'react-bootstrap';
 
 const CourseDetailPage = () => {

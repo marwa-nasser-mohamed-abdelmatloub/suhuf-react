@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Card, Row, Col, Badge, Button } from 'react-bootstrap';
-import { useTheme } from './shared/ThemeProvider';
-import PrimaryButton from './shared/PrimaryButton';
-import AnimatedTitle from './shared/AnimatedTitle';
+import { useTheme } from '../shared/ThemeProvider';
+import PrimaryButton from '../shared/PrimaryButton';
+import AnimatedTitle from '../shared/AnimatedTitle';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'; // [REHAB] استخدم SweetAlert2
 

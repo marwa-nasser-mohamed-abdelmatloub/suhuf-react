@@ -1,17 +1,28 @@
 import React from 'react';
-import HeroSection from '../components/HeroSection';
+import HeroSection from '../components/shared/HeroSection';
 import { Container, Row, Col } from 'react-bootstrap';
 import PrimaryButton from '../components/shared/PrimaryButton';
 import Logo from '../components/shared/Logo';
+import Navbar from '../components/shared/Navbar';
+import FeaturesSection from '../components/home/FeaturesSection';
+import ServicesSection from '../components/home/ServicesSection';
+import AboutSection from '../components/home/AboutSection';
 
 const HomePage = () => {
     return (
         <>
+            <Navbar />
             <HeroSection
                 title="أكاديمية صحف للقرآن الكريم"
                 subtitle="مركز متخصص في تعليم القرآن الكريم وعلومه بأفضل الطرق التعليمية"
                 backgroundImage="/path-to-background-image.jpg"
             />
+
+            <FeaturesSection />
+            
+            <ServicesSection />
+
+            <AboutSection />
 
             <Container className="py-5">
                 <Row className="align-items-center mb-5" data-aos="fade-up">

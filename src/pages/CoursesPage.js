@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCourses } from '../services/api';
-import CourseList from '../components/CourseList';
-import HeroSection from '../components/HeroSection';
+import CourseList from '../components/courses/CourseList';
+import HeroSection from '../components/shared/HeroSection';
 import { Container, Alert, Spinner, Form, Row, Col, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -91,7 +91,7 @@ const CoursesPage = () => {
                 title="كورسات أكاديمية صحف القرآنية"
                 subtitle="تعلم الطريقة الصحيحة لتلاوة وحفظ القرآن الكريم مع نخبة من المعلمين المتخصصين"
             />
-            
+
             <Container className="py-4">
                 <Row className="mb-4">
                     <Col md={6} className="mb-3">
@@ -144,8 +144,8 @@ const CoursesPage = () => {
 
                 <div className="text-center mb-4">
                     <Link to="/">
-                        <Button 
-                            variant="outline-primary" 
+                        <Button
+                            variant="outline-primary"
                             style={{ borderRadius: '25px', padding: '8px 20px' }}
                         >
                             ← العودة للصفحة الرئيسية

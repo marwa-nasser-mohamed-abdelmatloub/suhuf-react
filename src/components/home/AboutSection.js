@@ -68,7 +68,13 @@ const AboutSection = () => {
                             }}
                             onClick={() => setShowVideo(true)}
                         >
-                            <span className="video-pulse-outer"></span>
+                            <span
+                                className="video-pulse-outer"
+                                style={{
+                                    background: theme.primary,
+                                    opacity: 0.2
+                                }}
+                            ></span>
                             <i className="bi bi-play-fill position-relative" style={{ zIndex: 2 }}></i>
                         </button>
                     </div>
@@ -125,7 +131,6 @@ const AboutSection = () => {
                     top: 50%;
                     width: 90px;
                     height: 90px;
-                    background: rgba(15, 85, 120, 0.2);
                     border-radius: 50%;
                     transform: translate(-50%, -50%);
                     z-index: 1;

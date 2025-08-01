@@ -97,17 +97,6 @@ const HeroSection = ({ title, subtitle }) => {
                         {/* الزرين مباشرة تحت الكلام */}
                         <div className="d-flex flex-column flex-sm-row justify-content-start align-items-center gap-3 mt-3 w-100" style={{ textAlign: 'right' }}>
                             <PrimaryButton
-                                href="/booking"
-                                className="pulse"
-                                style={{
-                                    padding: '12px 30px',
-                                    fontSize: '1.1rem',
-                                    minWidth: '160px'
-                                }}
-                            >
-                                احجز كورس
-                            </PrimaryButton>
-                            <PrimaryButton
                                 href="/contact"
                                 className="pulse"
                                 style={{
@@ -117,6 +106,18 @@ const HeroSection = ({ title, subtitle }) => {
                                 }}
                             >
                                 اتصل بنا
+                            </PrimaryButton>
+                            <PrimaryButton
+                                href="/booking"
+                                className="pulse"
+                                style={{
+                                    padding: '12px 30px',
+                                    fontSize: '1.1rem',
+                                    minWidth: '160px',
+                                    backgroundColor: theme.dark,
+                                }}
+                            >
+                                تجربة مجانية
                             </PrimaryButton>
                         </div>
                     </Col>

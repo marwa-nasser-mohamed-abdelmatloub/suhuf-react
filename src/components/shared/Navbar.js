@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Navbar, Nav } from 'react-bootstrap';
 import { useTheme } from './ThemeProvider';
 import logo from '../../assets/images/sohof-logo.jpg';
+import PrimaryButton from './PrimaryButton';
 
 const CustomNavbar = () => {
     const theme = useTheme();
@@ -43,20 +44,20 @@ const CustomNavbar = () => {
                             <div className="d-flex flex-column flex-md-row-reverse justify-content-center justify-content-md-start align-items-center align-items-md-end gap-3">
                                 {/* Phone */}
                                 <div className="d-flex align-items-center hover-grow">
+                                    <i className="bi bi-telephone-fill ms-2 fs-4 text-success"></i>
                                     <div className="text-center text-md-end">
-                                        <div style={{ color: theme.dark }}><strong>(+1) 111-1234567</strong></div>
+                                        <div style={{ color: theme.dark }}><strong>(+20) 01080290663</strong></div>
                                         <div style={{ color: theme.muted, fontSize: '14px' }}>info@domain.com</div>
                                     </div>
-                                    <i className="bi bi-telephone-fill ms-2 fs-4 text-success"></i>
                                 </div>
 
                                 {/* Address */}
                                 <div className="d-flex align-items-center hover-grow">
-                                    <div className="text-center text-md-end">
-                                        <div style={{ color: theme.dark }}><strong>8448 Nicolls Ave</strong></div>
-                                        <div style={{ color: theme.muted, fontSize: '14px' }}>Jamaica, NY 11434</div>
-                                    </div>
                                     <i className="bi bi-geo-alt-fill ms-2 fs-4 text-success"></i>
+                                    <div className="text-center text-md-end">
+                                        <div style={{ color: theme.dark }}><strong>المنيا, مصر</strong></div>
+                                        <div style={{ color: theme.muted, fontSize: '14px' }}>المنيا, مصر</div>
+                                    </div>
                                 </div>
                             </div>
                         </Col>
@@ -64,12 +65,13 @@ const CustomNavbar = () => {
                 </Container>
             </div>
 
-
             {/* Navigation Bar with Toggle */}
             <Navbar expand="md" style={{ backgroundColor: theme.dark }} dir="rtl" variant="dark">
                 <Container>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" className="ms-auto border-0 text-light" />
-                    <Navbar.Collapse id="responsive-navbar-nav">
+                    <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-between w-100">
+
+                        {/* الروابط */}
                         <Nav className="ms-auto flex-row">
                             {[
                                 { label: 'الرئيسية' },
@@ -97,6 +99,12 @@ const CustomNavbar = () => {
                                 </Nav.Link>
                             ))}
                         </Nav>
+
+                        {/* زر تجربة مجانية */}
+                        <PrimaryButton className="d-flex align-items-center" style={{ padding: '6px 16px' }}>
+                            <i className="bi bi-book-fill ms-2"></i>
+                            تجربة مجانية
+                        </PrimaryButton>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

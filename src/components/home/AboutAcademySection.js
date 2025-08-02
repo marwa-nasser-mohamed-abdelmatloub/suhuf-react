@@ -63,7 +63,7 @@ const AboutAcademySection = () => {
                                 fontSize: '1.1rem'
                             }}
                         >
-                            اكتشف كورساتنا
+                            اكتشف دورتنا
                         </PrimaryButton>
                     </Col>
                 </Row>

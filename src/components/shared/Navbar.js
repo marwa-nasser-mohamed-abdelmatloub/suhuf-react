@@ -1,11 +1,22 @@
 import React from 'react';
 import { Container, Row, Col, Navbar, Nav } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import logo from '../../assets/images/sohof-logo.jpg';
 import PrimaryButton from './PrimaryButton';
 
 const CustomNavbar = () => {
     const theme = useTheme();
+
+    const navItems = [
+        { label: 'الرئيسية', path: '/' },
+        { label: 'اتصل بنا', path: '/contact' },
+        { label: 'من نحن', path: '/about', hasPlus: true },
+        { label: 'الخدمات', path: '/service', hasPlus: true },
+        { label: 'الدورات', path: '/courses' },
+        { label: 'الرسوم', path: '/pricing' },
+        { label: 'المدونة', path: '/blog' },
+    ];
 
     return (
         <div dir="rtl">
@@ -34,15 +45,12 @@ const CustomNavbar = () => {
             <div className="bg-white border-bottom py-3">
                 <Container>
                     <Row className="align-items-center text-center text-md-end">
-                        {/* Logo */}
                         <Col xs={12} md={3} className="mb-3 mb-md-0">
                             <img src={logo} alt="Quran For All" style={{ maxWidth: '120px' }} className="hover-grow" />
                         </Col>
 
-                        {/* Contact Info */}
                         <Col xs={12} md={9}>
                             <div className="d-flex flex-column flex-md-row-reverse justify-content-center justify-content-md-start align-items-center align-items-md-end gap-3">
-                                {/* Phone */}
                                 <div className="d-flex align-items-center hover-grow">
                                     <i className="bi bi-telephone-fill ms-2 fs-4 text-success"></i>
                                     <div className="text-center text-md-end">
@@ -51,7 +59,6 @@ const CustomNavbar = () => {
                                     </div>
                                 </div>
 
-                                {/* Address */}
                                 <div className="d-flex align-items-center hover-grow">
                                     <i className="bi bi-geo-alt-fill ms-2 fs-4 text-success"></i>
                                     <div className="text-center text-md-end">
@@ -65,42 +72,36 @@ const CustomNavbar = () => {
                 </Container>
             </div>
 
-            {/* Navigation Bar with Toggle */}
+            {/* Navigation Bar */}
             <Navbar expand="md" style={{ backgroundColor: theme.dark }} dir="rtl" variant="dark">
                 <Container>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" className="ms-auto border-0 text-light" />
                     <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-between w-100">
-
-                        {/* الروابط */}
                         <Nav className="ms-auto flex-row">
-                            {[
-                                { label: 'الرئيسية' },
-                                { label: 'اتصل بنا' },
-                                { label: 'من نحن', hasPlus: true },
-                                { label: 'الخدمات', hasPlus: true },
-                                { label: 'الرسوم' },
-                                { label: 'التحميلات' },
-                                { label: 'المدونة' },
-                            ].map((item, idx) => (
-                                <Nav.Link
+                            {navItems.map((item, idx) => (
+                                <NavLink
+                                    to={item.path}
                                     key={idx}
-                                    href="#"
-                                    className="fw-bold px-3 d-flex align-items-center nav-item-hover"
+                                    className={({ isActive }) =>
+                                        `fw-bold px-3 d-flex align-items-center nav-item-hover nav-link ${isActive ? 'active-link' : ''}`
+                                    }
                                     style={{
-                                        color: idx === 0 ? theme.primary : theme.light,
+                                        color: theme.light,
                                         flexDirection: 'row-reverse',
-                                        transition: 'all 0.3s ease'
+                                        transition: 'all 0.3s ease',
+                                        textDecoration: 'none'
                                     }}
                                 >
                                     {item.hasPlus && (
                                         <i className="bi bi-plus-lg me-2" style={{ fontSize: '0.8rem' }}></i>
                                     )}
                                     {item.label}
-                                </Nav.Link>
+                                </NavLink>
                             ))}
                         </Nav>
 
-                        {/* زر تجربة مجانية */}
+
+                        {/* Free Trial Button */}
                         <PrimaryButton className="d-flex align-items-center" style={{ padding: '6px 16px' }}>
                             <i className="bi bi-book-fill ms-2"></i>
                             تجربة مجانية
@@ -122,6 +123,15 @@ const CustomNavbar = () => {
                     transform: translateY(-2px);
                 }
                 .nav-item-hover:hover i {
+                    color: ${theme.primary} !important;
+                }
+
+                .active-link {
+                    color: ${theme.primary} !important;
+                    transform: translateY(-2px);
+                }
+
+                .active-link i {
                     color: ${theme.primary} !important;
                 }
 

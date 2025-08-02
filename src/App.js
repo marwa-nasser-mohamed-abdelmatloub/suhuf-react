@@ -5,6 +5,8 @@ import CourseDetailPage from './pages/CourseDetailPage';
 import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard'; // [REHAB] أضفت الداشبورد
 import './App.css';
+import AboutPage from './pages/AboutPage';
+import ServicePage from './pages/ServicePage';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
               <Route path="/courses" element={<CoursesPage />} />
               <Route path="/courses/:id" element={<CourseDetailPage />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/service" element={<ServicePage />} />
             </Routes>
           </main>
         </div>

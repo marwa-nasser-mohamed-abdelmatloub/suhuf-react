@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCourses } from '../services/api';
 import CourseList from '../components/courses/CourseList';
-import HeroSection from '../components/shared/HeroSection';
+import Navbar from '../components/shared/Navbar';
+import BabyHeroSection from '../components/shared/BabyHeroSection'; 
 import { Container, Alert, Spinner, Form, Row, Col, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Footer from '../components/shared/Footer';
 
 const CoursesPage = () => {
     const [courses, setCourses] = useState([]);
@@ -66,31 +68,50 @@ const CoursesPage = () => {
 
     if (loading) {
         return (
-            <Container className="py-5 text-center" style={{ minHeight: '50vh' }}>
-                <Spinner animation="border" role="status" style={{ width: '3rem', height: '3rem' }}>
-                    <span className="visually-hidden">جاري التحميل...</span>
-                </Spinner>
-                <p className="mt-3">جاري تحميل الكورسات...</p>
-            </Container>
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
+                <div className="text-center">
+                    <Spinner animation="border" role="status" style={{ width: '4rem', height: '4rem', color: '#0f5578' }}>
+                        <span className="visually-hidden">جاري التحميل...</span>
+                    </Spinner>
+                    <h5 className="mt-4" style={{ color: '#0f5578' }}>
+                        جاري تحميل الكورسات، يرجى الانتظار...
+                    </h5>
+                </div>
+            </div>
         );
     }
 
     if (error) {
         return (
-            <Container className="py-5">
-                <Alert variant="danger" className="text-center">
-                    {error}
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
+                <Alert variant="danger" className="text-center w-100" style={{ maxWidth: '600px' }}>
+                    <div className="mb-3">
+                        <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '2rem', color: '#dc3545' }}></i>
+                    </div>
+                    <h5>{error}</h5>
+                    <Button
+                        variant="outline-danger"
+                        onClick={() => window.location.reload()}
+                        className="mt-3"
+                        style={{ borderRadius: '20px', padding: '6px 20px' }}
+                    >
+                        إعادة المحاولة
+                    </Button>
                 </Alert>
-            </Container>
+            </div>
         );
     }
 
     return (
         <>
-            <HeroSection
-                title="كورسات أكاديمية صحف القرآنية"
-                subtitle="تعلم الطريقة الصحيحة لتلاوة وحفظ القرآن الكريم مع نخبة من المعلمين المتخصصين"
-            />
+            <Navbar />
+
+            <BabyHeroSection
+                title="الدورات"
+                breadcrumb="الدورات"
+                backgroundImage="/path-to-background-image.jpg"
+            >
+            </BabyHeroSection>
 
             <Container className="py-4">
                 <Row className="mb-4">
@@ -157,6 +178,9 @@ const CoursesPage = () => {
             <div id="courses" className="fade-in-up">
                 <CourseList courses={filteredCourses} />
             </div>
+
+            <Footer />
+
         </>
     );
 };

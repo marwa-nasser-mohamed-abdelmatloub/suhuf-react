@@ -142,7 +142,7 @@ const CourseDetails = ({ course }) => {
                                         marginLeft: '10px'
                                     }}
                                 >
-                                    السعر: {course.price} ريال
+                                    السعر: {course.price} جنية
                                 </Badge>
                                 <Badge
                                     pill

@@ -51,7 +51,7 @@ const Start = () => {
                     <Col
                         md={6}
                         className="d-flex justify-content-center justify-content-md-end mb-4 mb-md-0 video-col"
-                        style={{ marginTop: '100px' }}
+                        style={{ marginTop: '80px' }}
                     >
                         <button
                             className="btn rounded-circle position-relative video-pulse-btn"

@@ -6,6 +6,8 @@ import logo from '../../assets/images/sohof-logo.jpg';
 import PrimaryButton from './PrimaryButton';
 
 const CustomNavbar = () => {
+    // حالة المستخدم (للتجربة، يمكن ربطها بباك اند لاحقًا)
+    const [user, setUser] = React.useState(null); // null أو { name: 'اسم المستخدم' }
     const theme = useTheme();
 
     const navItems = [
@@ -101,11 +103,52 @@ const CustomNavbar = () => {
                         </Nav>
 
 
-                        {/* Free Trial Button */}
-                        <PrimaryButton className="d-flex align-items-center" style={{ padding: '6px 16px' }}>
-                            <i className="bi bi-book-fill ms-2"></i>
-                            تجربة مجانية
-                        </PrimaryButton>
+                        {/* Free Trial, Login, Register, User Info */}
+                        <div className="d-flex align-items-center gap-2">
+                            <PrimaryButton className="d-flex align-items-center" style={{ padding: '6px 16px' }}>
+                                <i className="bi bi-book-fill ms-2"></i>
+                                تجربة مجانية
+                            </PrimaryButton>
+                            {!user ? (
+                                <>
+                                    <NavLink to="/login">
+                                        <PrimaryButton
+                                            className="d-flex align-items-center"
+                                            style={{ padding: '6px 16px', backgroundColor: theme.success, borderColor: theme.success }}
+                                        >
+                                            <i className="bi bi-person ms-2"></i>
+                                            تسجيل الدخول
+                                        </PrimaryButton>
+                                    </NavLink>
+
+                                    <NavLink to="/register">
+                                        <PrimaryButton
+                                            className="d-flex align-items-center"
+                                            style={{ padding: '6px 16px', backgroundColor: theme.primary, borderColor: theme.primary }}
+                                        >
+                                            <i className="bi bi-person-plus ms-2"></i>
+                                            تسجيل جديد
+                                        </PrimaryButton>
+                                    </NavLink>
+                                </>
+                            ) : (
+                                <>
+                                    <span style={{ color: theme.primary, fontWeight: 'bold', marginRight: 10 }}>
+                                        Welcome, {user.name}
+                                    </span>
+                                    <NavLink>
+                                        <PrimaryButton
+                                            className="d-flex align-items-center"
+                                            style={{ padding: '6px 16px', backgroundColor: theme.danger, borderColor: theme.danger }}
+                                            onClick={() => setUser(null)}
+                                        >
+                                            <i className="bi bi-box-arrow-right ms-2"></i>
+                                            تسجيل الخروج
+                                        </PrimaryButton>
+                                    </NavLink>
+                                </>
+                            )}
+                        </div>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

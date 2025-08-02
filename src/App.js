@@ -9,6 +9,7 @@ import AboutPage from './pages/AboutPage';
 import ServicePage from './pages/ServicePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/service" element={<ServicePage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
             </Routes>

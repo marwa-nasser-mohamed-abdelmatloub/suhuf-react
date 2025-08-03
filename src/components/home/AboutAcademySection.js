@@ -10,17 +10,13 @@ const AboutAcademySection = () => {
     return (
         <section style={{ backgroundColor: theme.secondary, padding: '80px 0' }}>
             <Container>
-                <Row className="align-items-center mb-5" data-aos="fade-up">
-
-                    {/* الشعار */}
-                    <Col md={6} className="mb-4 mb-md-0" data-aos="fade-right">
+                <Row className="align-items-center mb-5 about-academy-row" data-aos="fade-up">
+                    <Col md={6} className="mb-4 mb-md-0 text-center" data-aos="fade-right">
                         <Logo size="lg" className="mx-auto d-block floating" />
                     </Col>
-
-                    {/* النصوص */}
-                    <Col md={6} data-aos="fade-left" data-aos-delay="200">
+                    <Col md={6} className="about-academy-col text-md-end text-center" data-aos="fade-left" data-aos-delay="200">
                         <h2
-                            className="mb-4"
+                            className="mb-4 d-inline-block"
                             style={{
                                 color: theme.primary,
                                 fontWeight: '700',
@@ -41,7 +37,6 @@ const AboutAcademySection = () => {
                                 }}
                             ></span>
                         </h2>
-
                         <p
                             className="lead"
                             style={{
@@ -54,7 +49,6 @@ const AboutAcademySection = () => {
                             نقدم كورسات متخصصة في التجويد، التلاوة، الحفظ، والفهم الصحيح للقرآن الكريم
                             مع نخبة من المعلمين المؤهلين.
                         </p>
-
                         <PrimaryButton
                             href="/courses"
                             className="mt-3 pulse"
@@ -68,6 +62,21 @@ const AboutAcademySection = () => {
                     </Col>
                 </Row>
             </Container>
+            <style>{`
+                @media (max-width: 991.98px) {
+                    .about-academy-row {
+                        justify-content: center !important;
+                        text-align: center !important;
+                    }
+                    .about-academy-col {
+                        text-align: center !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                    }
+                }
+            `}</style>
         </section>
     );
 };

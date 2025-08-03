@@ -22,21 +22,20 @@ const HomePage = () => {
             />
 
             <AboutAcademySection />
-
             <FeaturesSection />
-            
             <AboutSection />
-
             <ServicesSection />
-
             <StatsSection />
-
             <StepsSection />
-
             <Start />
-            
             <Footer />
 
+            <style>{`
+                body, #root {
+                    overflow-x: hidden !important;
+                    background: #fff !important;
+                }
+            `}</style>
         </>
     );
 };

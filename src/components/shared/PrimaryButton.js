@@ -3,11 +3,12 @@ import { Button } from 'react-bootstrap';
 import { useTheme } from './ThemeProvider';
 import PropTypes from 'prop-types';
 
-const PrimaryButton = ({ children, onClick, href, className = '', style = {} }) => {
+const PrimaryButton = ({ children, onClick, href, className = '', style = {}, type = 'button' }) => {
     const theme = useTheme();
 
     return (
         <Button
+            type={type}
             className={`primary-btn ${className}`}
             style={{
                 backgroundColor: theme.primary,

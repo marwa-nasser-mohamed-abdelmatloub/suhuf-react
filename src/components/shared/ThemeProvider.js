@@ -12,7 +12,10 @@ export const ThemeProvider = ({ children }) => {
         text: '#212529',
         muted: '#6c757d',
         accent: '#ff6b6b',
-        success: '#28a745'
+        success: '#28a745',
+        danger: '#dc3545',
+        warning: '#ffc107',
+        info: '#17a2b8'
     };
 
     return (

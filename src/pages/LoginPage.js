@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Card, Form, Button, Alert, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../components/shared/ThemeProvider';
 import AnimatedTitle from '../components/shared/AnimatedTitle';
-import { loginUser } from '../services/api';
+import AuthContext from '../contexts/AuthContext';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const from = location.state?.from?.pathname || '/courses';
+    const from = location.state?.from?.pathname || '/';
 
     const handleChange = (e) => {
         setFormData({
@@ -25,33 +25,32 @@ const LoginPage = () => {
         });
     };
 
+    const { login, isAuthenticated, user } = useContext(AuthContext);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
         try {
-            const data = await loginUser(formData);
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            // [REHAB] إذا كان المستخدم أدمن، redirect للداشبورد
-            if (data.user && (data.user.is_staff || data.user.is_superuser)) {
-                navigate('/admin-dashboard');
-            } else {
-                navigate(from, { replace: true });
-            }
+            await login(formData);
         } catch (error) {
-            if (error.response?.data?.message) {
-                setError(error.response.data.message);
-            } else if (error.message) {
-                setError(error.message);
-            } else {
-                setError('خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
-            }
+            setError(error.message || 'خطأ في تسجيل الدخول. يرجى المحاولة مرة أخرى.');
         } finally {
             setLoading(false);
         }
     };
+
+    const { isTeacher } = useContext(AuthContext);
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            if (isTeacher) {
+                navigate('/admin-dashboard', { replace: true });
+            } else {
+                navigate(from, { replace: true });
+            }
+        }
+    }, [isAuthenticated, isTeacher, user, navigate, from]);
 
     return (
         <Container className="py-5">
@@ -105,6 +104,7 @@ const LoginPage = () => {
                                         required
                                         style={{ borderRadius: '10px' }}
                                         placeholder="أدخل كلمة المرور"
+                                        autoComplete="current-password"
                                     />
                                 </Form.Group>
 
@@ -126,7 +126,7 @@ const LoginPage = () => {
                                 <div className="text-center">
                                     <p className="mb-0">
                                         ليس لديك حساب؟{' '}
-                                        <Link 
+                                        <Link
                                             to="/register"
                                             style={{ color: theme.primary, textDecoration: 'none' }}
                                         >
@@ -143,4 +143,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage; 
+export default LoginPage;

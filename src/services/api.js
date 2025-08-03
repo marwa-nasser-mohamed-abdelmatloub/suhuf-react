@@ -4,115 +4,152 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000, // وقت انتظار 10 ثواني
+    timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
 });
 
-// [Rehab]:- Add request interceptor to include token
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        // إضافة الـ token فقط إذا كان موجوداً وليس طلب للكورسات
-        if (token && !config.url.includes('/courses/')) {
-            config.headers.Authorization = `Token ${token}`;
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            config.headers.Authorization = `Token ${localStorage.getItem('authToken')}`;
         }
-        console.log('Request:', config.method?.toUpperCase(), config.url);
         return config;
     },
     (error) => {
-        console.error('Request error:', error);
         return Promise.reject(error);
     }
 );
 
-// [Rehab]:- Add response interceptor to handle errors
 api.interceptors.response.use(
-    (response) => {
-        console.log('Response:', response.status, response.config.url);
-        return response;
-    },
+    (response) => response,
     (error) => {
-        console.error('Response error:', {
-            status: error.response?.status,
-            statusText: error.response?.statusText,
-            url: error.config?.url,
-            data: error.response?.data,
-            message: error.message
-        });
-        
         if (error.response?.status === 401) {
-            // Token expired or invalid
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem('authToken');
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
 );
 
-export const fetchCourses = async () => {
+// دوال الكورسات
+export const fetchCourses = async (search = '', level = '') => {
     try {
-        console.log('Fetching courses...');
-        const response = await api.get('/courses/');
-        console.log('Courses fetched successfully:', response.data);
+        const response = await api.get('/courses/', {
+            params: { search, level }
+        });
         return response.data;
     } catch (error) {
-        console.error('Error fetching courses:', {
-            message: error.message,
-            url: error.config?.url,
-            status: error.response?.status,
-            statusText: error.response?.statusText,
-            data: error.response?.data
-        });
-        
         if (error.response?.status === 0 || error.code === 'ERR_NETWORK') {
-            throw new Error('لا يمكن الاتصال بالخادم. يرجى التحقق من تشغيل الباك إند.');
+            throw new Error('لا يمكن الاتصال بالخادم. يرجى التحقق من اتصال الشبكة.');
         }
-        
-        if (error.response?.status === 400) {
-            throw new Error(`خطأ في البيانات: ${JSON.stringify(error.response.data)}`);
-        }
-        
         throw error;
     }
 };
 
 export const fetchCourseDetails = async (id) => {
     try {
-        console.log('Fetching course details for ID:', id);
         const response = await api.get(`/courses/${id}/`);
-        console.log('Course details fetched successfully:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching course details:', {
-            message: error.message,
-            url: error.config?.url,
-            status: error.response?.status,
-            statusText: error.response?.statusText,
-            data: error.response?.data
-        });
-        
-        if (error.response?.status === 0 || error.code === 'ERR_NETWORK') {
-            throw new Error('لا يمكن الاتصال بالخادم. يرجى التحقق من تشغيل الباك إند.');
+        if (error.response?.status === 404) {
+            throw new Error('الدورة غير موجودة');
         }
-        
-        if (error.response?.status === 400) {
-            throw new Error(`خطأ في البيانات: ${JSON.stringify(error.response.data)}`);
-        }
-        
         throw error;
     }
 };
 
-// [Rehab]:- Authentication API functions
+export const createCourse = async (courseData) => {
+    try {
+        const response = await api.post('/courses/', courseData);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 400) {
+            throw new Error('بيانات الكورس غير صالحة');
+        }
+        throw error;
+    }
+};
+
+export const updateCourse = async (id, courseData) => {
+    try {
+        const response = await api.put(`/courses/${id}/`, courseData);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 400) {
+            throw new Error('بيانات الكورس غير صالحة');
+        }
+        throw error;
+    }
+};
+
+export const deleteCourse = async (id) => {
+    try {
+        await api.delete(`/courses/${id}/`);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// دوال المستخدمين
+export const fetchUsers = async (search = '', userType = '') => {
+    try {
+        const response = await api.get('/accounts/users/', {
+            params: { search, user_type: userType }
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 0 || error.code === 'ERR_NETWORK') {
+            throw new Error('لا يمكن الاتصال بالخادم. يرجى التحقق من اتصال الشبكة.');
+        }
+        throw error;
+    }
+};
+
+export const createUser = async (userData) => {
+    try {
+        const response = await api.post('/accounts/users/', userData);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 400) {
+            throw new Error('بيانات المستخدم غير صالحة');
+        }
+        throw error;
+    }
+};
+
+export const updateUser = async (id, userData) => {
+    try {
+        const response = await api.put(`/accounts/users/${id}/`, userData);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 400) {
+            throw new Error('بيانات المستخدم غير صالحة');
+        }
+        throw error;
+    }
+};
+
+export const deleteUser = async (id) => {
+    try {
+        await api.delete(`/accounts/users/${id}/`);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// دوال المصادقة
 export const loginUser = async (credentials) => {
     try {
         const response = await api.post('/accounts/login/', credentials);
         return response.data;
     } catch (error) {
-        console.error('Login error:', error.response?.data);
+        if (error.response?.status === 400) {
+            throw new Error('بيانات الدخول غير صحيحة');
+        }
         throw error;
     }
 };
@@ -122,20 +159,22 @@ export const registerUser = async (userData) => {
         const response = await api.post('/accounts/register/', userData);
         return response.data;
     } catch (error) {
-        console.error('Registration error:', error.response?.data);
+        if (error.response?.status === 400) {
+            const errorData = error.response.data;
+            throw new Error(
+                errorData.username?.[0] ||
+                errorData.email?.[0] ||
+                'بيانات التسجيل غير صالحة'
+            );
+        }
         throw error;
     }
 };
 
 export const logoutUser = async () => {
     try {
-        await api.post('/accounts/users/logout/');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-    } catch (error) {
-        console.error('Logout error:', error);
-        // Remove token anyway
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        await api.post('/accounts/logout/');
+    } finally {
+        localStorage.removeItem('authToken');
     }
 };

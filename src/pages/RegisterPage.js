@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Card, Form, Button, Alert, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../components/shared/ThemeProvider';
 import AnimatedTitle from '../components/shared/AnimatedTitle';
-import { registerUser } from '../services/api';
+import AuthContext from '../contexts/AuthContext';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -12,20 +12,24 @@ const RegisterPage = () => {
         password: '',
         password2: '',
         full_name: '',
-        phone_number: ''
+        phone_number: '',
+        is_student: true
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const theme = useTheme();
     const navigate = useNavigate();
+    const { login, isTeacher, isAuthenticated } = useContext(AuthContext);
 
     const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: type === 'checkbox' ? checked : value
         });
     };
 
+    const [redirectAfterRegister, setRedirectAfterRegister] = useState(false);
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -37,44 +41,57 @@ const RegisterPage = () => {
             return;
         }
 
+        if (formData.password.length < 8) {
+            setError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const data = await registerUser({
+            const body = {
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
-                password2: formData.password2, // [REHAB] أضفت إرسال تأكيد كلمة المرور
                 full_name: formData.full_name,
-                phone_number: formData.phone_number
+                phone_number: formData.phone_number,
+                is_student: formData.is_student,
+                is_quran_teacher: !formData.is_student
+            };
+
+            const response = await fetch('http://localhost:8000/api/accounts/register/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
             });
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            navigate('/courses', { replace: true });
-        } catch (error) {
-            // اطبع كل تفاصيل الخطأ في الكونسول
-            console.error('Registration error:', error);
-            if (error.response && error.response.data) {
-                // اطبع تفاصيل الخطأ في الكونسول
-                console.error('Error response data:', error.response.data);
-                // اعرض الرسالة للمستخدم بشكل واضح
-                if (typeof error.response.data === 'string') {
-                    setError(error.response.data);
-                } else if (error.response.data.message) {
-                    setError(error.response.data.message);
-                } else if (error.response.data.errors) {
-                    const errorMessages = Object.values(error.response.data.errors).flat();
-                    setError(errorMessages.join(', '));
-                } else {
-                    setError(JSON.stringify(error.response.data));
-                }
-            } else if (error.message) {
-                setError(error.message);
-            } else {
-                setError('حدث خطأ غير متوقع');
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(
+                    errorData.message ||
+                    errorData.username?.[0] ||
+                    errorData.email?.[0] ||
+                    'حدث خطأ أثناء التسجيل'
+                );
             }
+
+            await login({ username: formData.username, password: formData.password });
+            setRedirectAfterRegister(true);
+        } catch (error) {
+            setError(error.message || 'حدث خطأ غير متوقع أثناء التسجيل');
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (redirectAfterRegister && isAuthenticated) {
+            if (isTeacher) {
+                navigate('/admin-dashboard');
+            } else {
+                navigate('/');
+            }
+        }
+    }, [redirectAfterRegister, isAuthenticated, isTeacher, navigate]);
 
     return (
         <Container className="py-5">
@@ -177,8 +194,10 @@ const RegisterPage = () => {
                                                 value={formData.password}
                                                 onChange={handleChange}
                                                 required
+                                                minLength="8"
                                                 style={{ borderRadius: '10px' }}
-                                                placeholder="أدخل كلمة المرور"
+                                                placeholder="أدخل كلمة المرور (8 أحرف على الأقل)"
+                                                autoComplete="new-password"
                                             />
                                         </Form.Group>
                                     </Col>
@@ -193,10 +212,28 @@ const RegisterPage = () => {
                                                 required
                                                 style={{ borderRadius: '10px' }}
                                                 placeholder="أعد إدخال كلمة المرور"
+                                                autoComplete="new-password"
                                             />
                                         </Form.Group>
                                     </Col>
                                 </Row>
+
+                                <Form.Group className="mb-4">
+                                    <Form.Check
+                                        type="switch"
+                                        id="role-switch"
+                                        label="هل أنت معلم قرآن؟"
+                                        name="is_student"
+                                        checked={!formData.is_student}
+                                        onChange={() => handleChange({
+                                            target: {
+                                                name: 'is_student',
+                                                type: 'checkbox',
+                                                checked: !formData.is_student
+                                            }
+                                        })}
+                                    />
+                                </Form.Group>
 
                                 <Button
                                     type="submit"
@@ -216,7 +253,7 @@ const RegisterPage = () => {
                                 <div className="text-center">
                                     <p className="mb-0">
                                         لديك حساب بالفعل؟{' '}
-                                        <Link 
+                                        <Link
                                             to="/login"
                                             style={{ color: theme.primary, textDecoration: 'none' }}
                                         >
@@ -233,4 +270,4 @@ const RegisterPage = () => {
     );
 };
 
-export default RegisterPage; 
+export default RegisterPage;

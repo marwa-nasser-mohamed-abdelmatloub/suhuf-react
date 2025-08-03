@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container, Row, Col, Navbar, Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import logo from '../../assets/images/sohof-logo.jpg';
 import PrimaryButton from './PrimaryButton';
+import AuthContext from '../../contexts/AuthContext';
 
 const CustomNavbar = () => {
-    // حالة المستخدم (للتجربة، يمكن ربطها بباك اند لاحقًا)
-    const [user, setUser] = React.useState(null); // null أو { name: 'اسم المستخدم' }
+    const { user, isAuthenticated, logout } = useContext(AuthContext);
+    console.log('Navbar user:', user);
     const theme = useTheme();
 
     const navItems = [
@@ -48,7 +49,9 @@ const CustomNavbar = () => {
                 <Container>
                     <Row className="align-items-center text-center text-md-end">
                         <Col xs={12} md={3} className="mb-3 mb-md-0">
-                            <img src={logo} alt="Quran For All" style={{ maxWidth: '120px' }} className="hover-grow" />
+                            <NavLink to="/">
+                                <img src={logo} alt="Quran For All" style={{ maxWidth: '120px' }} className="hover-grow" />
+                            </NavLink>
                         </Col>
 
                         <Col xs={12} md={9}>
@@ -109,7 +112,7 @@ const CustomNavbar = () => {
                                 <i className="bi bi-book-fill ms-2"></i>
                                 تجربة مجانية
                             </PrimaryButton>
-                            {!user ? (
+                            {!isAuthenticated ? (
                                 <>
                                     <NavLink to="/login">
                                         <PrimaryButton
@@ -134,18 +137,18 @@ const CustomNavbar = () => {
                             ) : (
                                 <>
                                     <span style={{ color: theme.primary, fontWeight: 'bold', marginRight: 10 }}>
-                                        Welcome, {user.name}
+                                        أهلاً،
+                                        {user?.is_quran_teacher}
+                                        {user?.is_student}
                                     </span>
-                                    <NavLink>
-                                        <PrimaryButton
-                                            className="d-flex align-items-center"
-                                            style={{ padding: '6px 16px', backgroundColor: theme.danger, borderColor: theme.danger }}
-                                            onClick={() => setUser(null)}
-                                        >
-                                            <i className="bi bi-box-arrow-right ms-2"></i>
-                                            تسجيل الخروج
-                                        </PrimaryButton>
-                                    </NavLink>
+                                    <PrimaryButton
+                                        className="d-flex align-items-center"
+                                        style={{ padding: '6px 16px', backgroundColor: theme.danger, borderColor: theme.danger }}
+                                        onClick={logout}
+                                    >
+                                        <i className="bi bi-box-arrow-right ms-2"></i>
+                                        تسجيل الخروج
+                                    </PrimaryButton>
                                 </>
                             )}
                         </div>

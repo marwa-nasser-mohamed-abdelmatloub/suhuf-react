@@ -1,9 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Card, Form, Button, Alert, Row, Col } from 'react-bootstrap';
+import { Container, Card, Form, Row, Col, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../components/shared/ThemeProvider';
-import AnimatedTitle from '../components/shared/AnimatedTitle';
+import Logo from '../components/shared/Logo';
+import PrimaryButton from '../components/shared/PrimaryButton';
 import AuthContext from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -12,50 +14,224 @@ const RegisterPage = () => {
         password: '',
         password2: '',
         full_name: '',
-        phone_number: '',
-        is_student: true
+        phone_number: ''
     });
+    const [errors, setErrors] = useState({});
+    const [validated, setValidated] = useState({});
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword2, setShowPassword2] = useState(false);
+    const [passwordHasText, setPasswordHasText] = useState(false);
+    const [password2HasText, setPassword2HasText] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
     const { login, isTeacher, isAuthenticated } = useContext(AuthContext);
 
+    const validateField = (name, value) => {
+        const newErrors = { ...errors };
+        const newValidated = { ...validated };
+        const phoneRegex = /^01[0125][0-9]{8}$/;
+
+        if (name === 'username') {
+            if (!value.trim()) {
+                newErrors.username = 'اسم المستخدم مطلوب';
+                newValidated.username = false;
+            } else if (value.length < 4) {
+                newErrors.username = 'يجب أن يكون اسم المستخدم 4 أحرف على الأقل';
+                newValidated.username = false;
+            } else {
+                delete newErrors.username;
+                newValidated.username = true;
+            }
+        }
+
+        if (name === 'email') {
+            if (!value) {
+                newErrors.email = 'البريد الإلكتروني مطلوب';
+                newValidated.email = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                newErrors.email = 'بريد إلكتروني غير صالح';
+                newValidated.email = false;
+            } else {
+                delete newErrors.email;
+                newValidated.email = true;
+            }
+        }
+
+        if (name === 'full_name') {
+            if (!value) {
+                newErrors.full_name = 'الاسم الكامل مطلوب';
+                newValidated.full_name = false;
+            } else if (value.length < 4) {
+                newErrors.full_name = 'يجب أن يكون الاسم 4 أحرف على الأقل';
+            } else {
+                delete newErrors.full_name;
+                newValidated.full_name = true;
+            }
+        }
+
+        if (name === 'phone_number') {
+            if (!value) {
+                newErrors.phone_number = 'رقم الهاتف مطلوب';
+                newValidated.phone_number = false;
+            } else if (!phoneRegex.test(value)) {
+                newErrors.phone_number = 'رقم هاتف غير صالح (يجب أن يبدأ بـ 01)';
+                newValidated.phone_number = false;
+            } else {
+                delete newErrors.phone_number;
+                newValidated.phone_number = true;
+            }
+        }
+
+        if (name === 'password') {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+            if (!value) {
+                newErrors.password = 'كلمة المرور مطلوبة';
+                newValidated.password = false;
+            } else if (!passwordRegex.test(value)) {
+                newErrors.password = 'يجب أن تحتوي كلمة المرور على حرف صغير وحرف كبير ورقم ورمز خاص، وطولها 8 أحرف على الأقل';
+                newValidated.password = false;
+            } else {
+                delete newErrors.password;
+                newValidated.password = true;
+            }
+        }
+
+        if (name === 'password2') {
+            if (!value) {
+                newErrors.password2 = 'تأكيد كلمة المرور مطلوب';
+                newValidated.password2 = false;
+            } else if (value !== formData.password) {
+                newErrors.password2 = 'كلمات المرور غير متطابقة';
+                newValidated.password2 = false;
+            } else {
+                delete newErrors.password2;
+                newValidated.password2 = true;
+            }
+        }
+
+        setErrors(newErrors);
+        setValidated(newValidated);
+    };
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prev => ({
+            ...prev,
             [name]: type === 'checkbox' ? checked : value
-        });
+        }));
+
+        if (name === 'password') {
+            setPasswordHasText(value.length > 0);
+        } else if (name === 'password2') {
+            setPassword2HasText(value.length > 0);
+        }
+
+        validateField(name, type === 'checkbox' ? checked : value);
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        validateField(name, value);
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {};
+        const newValidated = {};
+        const phoneRegex = /^01[0125][0-9]{8}$/;
+
+        if (!formData.username.trim()) {
+            newErrors.username = 'اسم المستخدم مطلوب';
+            newValidated.username = false;
+            isValid = false;
+        } else if (formData.username.length < 4) {
+            newErrors.username = 'يجب أن يكون اسم المستخدم 4 أحرف على الأقل';
+            newValidated.username = false;
+            isValid = false;
+        } else {
+            newValidated.username = true;
+        }
+
+        if (!formData.email) {
+            newErrors.email = 'البريد الإلكتروني مطلوب';
+            newValidated.email = false;
+            isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'بريد إلكتروني غير صالح';
+            newValidated.email = false;
+            isValid = false;
+        } else {
+            newValidated.email = true;
+        }
+
+        if (!formData.full_name) {
+            newErrors.full_name = 'الاسم الكامل مطلوب';
+            newValidated.full_name = false;
+            isValid = false;
+        } else {
+            newValidated.full_name = true;
+        }
+
+        if (!formData.phone_number) {
+            newErrors.phone_number = 'رقم الهاتف مطلوب';
+            newValidated.phone_number = false;
+            isValid = false;
+        } else if (!phoneRegex.test(formData.phone_number)) {
+            newErrors.phone_number = 'رقم هاتف غير صالح (يجب أن يبدأ بـ 01)';
+            newValidated.phone_number = false;
+            isValid = false;
+        } else {
+            newValidated.phone_number = true;
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+        if (!formData.password) {
+            newErrors.password = 'كلمة المرور مطلوبة';
+            newValidated.password = false;
+            isValid = false;
+        } else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'يجب أن تحتوي كلمة المرور على حرف صغير وحرف كبير ورقم ورمز خاص، وطولها 8 أحرف على الأقل';
+            newValidated.password = false;
+            isValid = false;
+        } else {
+            newValidated.password = true;
+        }
+
+        if (!formData.password2) {
+            newErrors.password2 = 'تأكيد كلمة المرور مطلوب';
+            newValidated.password2 = false;
+            isValid = false;
+        } else if (formData.password !== formData.password2) {
+            newErrors.password2 = 'كلمات المرور غير متطابقة';
+            newValidated.password2 = false;
+            isValid = false;
+        } else {
+            newValidated.password2 = true;
+        }
+
+        setErrors(newErrors);
+        setValidated(newValidated);
+        return isValid;
     };
 
     const [redirectAfterRegister, setRedirectAfterRegister] = useState(false);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
+
         setLoading(true);
-        setError('');
-
-        if (formData.password !== formData.password2) {
-            setError('كلمات المرور غير متطابقة');
-            setLoading(false);
-            return;
-        }
-
-        if (formData.password.length < 8) {
-            setError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
-            setLoading(false);
-            return;
-        }
-
         try {
             const body = {
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
+                confirm_password: formData.password2,
                 full_name: formData.full_name,
                 phone_number: formData.phone_number,
-                is_student: formData.is_student,
-                is_quran_teacher: !formData.is_student
+                is_student: true,
+                is_quran_teacher: false
             };
 
             const response = await fetch('http://localhost:8000/api/accounts/register/', {
@@ -74,10 +250,27 @@ const RegisterPage = () => {
                 );
             }
 
+            await Swal.fire({
+                icon: 'success',
+                title: 'تم التسجيل بنجاح!',
+                text: 'جاري تسجيل دخولك تلقائياً...',
+                showConfirmButton: false,
+                timer: 1500,
+                background: theme.secondary,
+                color: theme.text
+            });
+
             await login({ username: formData.username, password: formData.password });
             setRedirectAfterRegister(true);
         } catch (error) {
-            setError(error.message || 'حدث خطأ غير متوقع أثناء التسجيل');
+            await Swal.fire({
+                icon: 'error',
+                title: 'خطأ في التسجيل',
+                text: error.message || 'حدث خطأ غير متوقع أثناء التسجيل',
+                confirmButtonColor: theme.primary,
+                background: theme.secondary,
+                color: theme.text
+            });
         } finally {
             setLoading(false);
         }
@@ -85,70 +278,90 @@ const RegisterPage = () => {
 
     useEffect(() => {
         if (redirectAfterRegister && isAuthenticated) {
-            if (isTeacher) {
-                navigate('/admin-dashboard');
-            } else {
-                navigate('/');
-            }
+            navigate(isTeacher ? '/admin-dashboard' : '/', { replace: true });
         }
     }, [redirectAfterRegister, isAuthenticated, isTeacher, navigate]);
 
     return (
-        <Container className="py-5">
+        <Container className="d-flex flex-column justify-content-center min-vh-100 py-5">
             <Row className="justify-content-center">
-                <Col md={8} lg={6}>
-                    <Card className="shadow-lg" style={{
-                        border: 'none',
-                        borderRadius: '15px',
-                        overflow: 'hidden'
+                <Col md={10} lg={8} xl={7}>
+                    <Card className="shadow-lg border-0" style={{
+                        borderRadius: '20px',
+                        overflow: 'hidden',
+                        background: theme.light
                     }}>
-                        <Card.Body className="p-5">
+                        <Card.Body>
                             <div className="text-center mb-4">
-                                <AnimatedTitle level={2} style={{
+                                <Logo size="md" className="mb-4" />
+                                <h2 style={{
                                     color: theme.primary,
+                                    fontWeight: '700',
                                     marginBottom: '10px'
                                 }}>
-                                    تسجيل حساب جديد
-                                </AnimatedTitle>
-                                <p className="text-muted">
+                                    انضم إلينا اليوم
+                                </h2>
+                                <p style={{ color: theme.muted }}>
                                     أنشئ حسابك للوصول إلى جميع الميزات
                                 </p>
                             </div>
 
-                            {error && (
-                                <Alert variant="danger" className="text-center">
-                                    {error}
-                                </Alert>
-                            )}
-
-                            <Form onSubmit={handleSubmit}>
+                            <Form onSubmit={handleSubmit} noValidate>
                                 <Row>
                                     <Col md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>اسم المستخدم</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                name="username"
-                                                value={formData.username}
-                                                onChange={handleChange}
-                                                required
-                                                style={{ borderRadius: '10px' }}
-                                                placeholder="أدخل اسم المستخدم"
-                                            />
+                                            <Form.Label style={{ fontWeight: '500' }}>اسم المستخدم</Form.Label>
+                                            <InputGroup hasValidation>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="username"
+                                                    value={formData.username}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    isInvalid={!!errors.username}
+                                                    isValid={validated.username}
+                                                    style={{
+                                                        borderRadius: '12px',
+                                                        padding: '12px 0',
+                                                        textAlign: 'center',
+                                                        borderColor: errors.username ? theme.danger : validated.username ? theme.success : '#ddd'
+                                                    }}
+                                                    placeholder="أدخل اسم المستخدم"
+                                                />
+                                            </InputGroup>
+                                            {errors.username && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                                    {errors.username}
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>البريد الإلكتروني</Form.Label>
-                                            <Form.Control
-                                                type="email"
-                                                name="email"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                required
-                                                style={{ borderRadius: '10px' }}
-                                                placeholder="أدخل البريد الإلكتروني"
-                                            />
+                                            <Form.Label style={{ fontWeight: '500' }}>البريد الإلكتروني</Form.Label>
+                                            <InputGroup hasValidation>
+                                                <Form.Control
+                                                    type="email"
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    isInvalid={!!errors.email}
+                                                    isValid={validated.email}
+                                                    style={{
+                                                        borderRadius: '12px',
+                                                        padding: '12px 0',
+                                                        textAlign: 'center',
+                                                        borderColor: errors.email ? theme.danger : validated.email ? theme.success : '#ddd'
+                                                    }}
+                                                    placeholder="أدخل البريد الإلكتروني"
+                                                />
+                                            </InputGroup>
+                                            {errors.email && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                                    {errors.email}
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -156,30 +369,58 @@ const RegisterPage = () => {
                                 <Row>
                                     <Col md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>الاسم الكامل</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                name="full_name"
-                                                value={formData.full_name}
-                                                onChange={handleChange}
-                                                required
-                                                style={{ borderRadius: '10px' }}
-                                                placeholder="أدخل الاسم الكامل"
-                                            />
+                                            <Form.Label style={{ fontWeight: '500' }}>الاسم الكامل</Form.Label>
+                                            <InputGroup hasValidation>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="full_name"
+                                                    value={formData.full_name}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    isInvalid={!!errors.full_name}
+                                                    isValid={validated.full_name}
+                                                    style={{
+                                                        borderRadius: '12px',
+                                                        padding: '12px 0',
+                                                        textAlign: 'center',
+                                                        borderColor: errors.full_name ? theme.danger : validated.full_name ? theme.success : '#ddd'
+                                                    }}
+                                                    placeholder="أدخل الاسم الكامل"
+                                                />
+                                            </InputGroup>
+                                            {errors.full_name && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                                    {errors.full_name}
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>رقم الهاتف</Form.Label>
-                                            <Form.Control
-                                                type="tel"
-                                                name="phone_number"
-                                                value={formData.phone_number}
-                                                onChange={handleChange}
-                                                required
-                                                style={{ borderRadius: '10px' }}
-                                                placeholder="أدخل رقم الهاتف"
-                                            />
+                                            <Form.Label style={{ fontWeight: '500' }}>رقم الهاتف</Form.Label>
+                                            <InputGroup hasValidation>
+                                                <Form.Control
+                                                    type="tel"
+                                                    name="phone_number"
+                                                    value={formData.phone_number}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    isInvalid={!!errors.phone_number}
+                                                    isValid={validated.phone_number}
+                                                    style={{
+                                                        borderRadius: '12px',
+                                                        padding: '12px 0',
+                                                        textAlign: 'center',
+                                                        borderColor: errors.phone_number ? theme.danger : validated.phone_number ? theme.success : '#ddd'
+                                                    }}
+                                                    placeholder="أدخل رقم الهاتف"
+                                                />
+                                            </InputGroup>
+                                            {errors.phone_number && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                                    {errors.phone_number}
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -187,79 +428,127 @@ const RegisterPage = () => {
                                 <Row>
                                     <Col md={6}>
                                         <Form.Group className="mb-3">
-                                            <Form.Label>كلمة المرور</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                name="password"
-                                                value={formData.password}
-                                                onChange={handleChange}
-                                                required
-                                                minLength="8"
-                                                style={{ borderRadius: '10px' }}
-                                                placeholder="أدخل كلمة المرور (8 أحرف على الأقل)"
-                                                autoComplete="new-password"
-                                            />
+                                            <Form.Label style={{ fontWeight: '500' }}>كلمة المرور</Form.Label>
+                                            <InputGroup hasValidation>
+                                                <Form.Control
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    name="password"
+                                                    value={formData.password}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    isInvalid={!!errors.password}
+                                                    isValid={validated.password}
+                                                    style={{
+                                                        borderRadius: '12px',
+                                                        padding: '12px 0',
+                                                        textAlign: 'center',
+                                                        borderColor: errors.password ? theme.danger : validated.password ? theme.success : '#ddd'
+                                                    }}
+                                                    placeholder="أدخل كلمة المرور"
+                                                />
+                                                {passwordHasText && (
+                                                    <span
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '30px',
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)',
+                                                            cursor: 'pointer',
+                                                            color: theme.muted,
+                                                            zIndex: 5,
+                                                            padding: '0 8px'
+                                                        }}
+                                                    >
+                                                        <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} style={{ fontSize: '18px' }}></i>
+                                                    </span>
+                                                )}
+                                            </InputGroup>
+                                            {errors.password && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                                    {errors.password}
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-4">
-                                            <Form.Label>تأكيد كلمة المرور</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                name="password2"
-                                                value={formData.password2}
-                                                onChange={handleChange}
-                                                required
-                                                style={{ borderRadius: '10px' }}
-                                                placeholder="أعد إدخال كلمة المرور"
-                                                autoComplete="new-password"
-                                            />
+                                            <Form.Label style={{ fontWeight: '500' }}>تأكيد كلمة المرور</Form.Label>
+                                            <InputGroup hasValidation>
+                                                <Form.Control
+                                                    type={showPassword2 ? 'text' : 'password'}
+                                                    name="password2"
+                                                    value={formData.password2}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    isInvalid={!!errors.password2}
+                                                    isValid={validated.password2}
+                                                    style={{
+                                                        borderRadius: '12px',
+                                                        padding: '12px 0',
+                                                        textAlign: 'center',
+                                                        borderColor: errors.password2 ? theme.danger : validated.password2 ? theme.success : '#ddd'
+                                                    }}
+                                                    placeholder="أعد إدخال كلمة المرور"
+                                                />
+                                                {password2HasText && (
+                                                    <span
+                                                        onClick={() => setShowPassword2(!showPassword2)}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '30px',
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)',
+                                                            cursor: 'pointer',
+                                                            color: theme.muted,
+                                                            zIndex: 5,
+                                                            padding: '0 8px'
+                                                        }}
+                                                    >
+                                                        <i className={showPassword2 ? 'fas fa-eye-slash' : 'fas fa-eye'} style={{ fontSize: '18px' }}></i>
+                                                    </span>
+                                                )}
+                                            </InputGroup>
+                                            {errors.password2 && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                                    {errors.password2}
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                 </Row>
 
-                                <Form.Group className="mb-4">
-                                    <Form.Check
-                                        type="switch"
-                                        id="role-switch"
-                                        label="هل أنت معلم قرآن؟"
-                                        name="is_student"
-                                        checked={!formData.is_student}
-                                        onChange={() => handleChange({
-                                            target: {
-                                                name: 'is_student',
-                                                type: 'checkbox',
-                                                checked: !formData.is_student
-                                            }
-                                        })}
-                                    />
-                                </Form.Group>
+                                <div className="d-flex align-items-center justify-content-center">
+                                    <PrimaryButton
+                                        type="submit"
+                                        className="w-50 mb-3"
+                                        disabled={loading}
+                                        style={{
+                                            fontSize: '1.1rem',
+                                            padding: '14px'
+                                        }}
+                                    >
+                                        {loading ? (
+                                            <span className="d-flex align-items-center justify-content-center">
+                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                جاري إنشاء الحساب...
+                                            </span>
+                                        ) : 'تسجيل الحساب'}
+                                    </PrimaryButton>
+                                </div>
 
-                                <Button
-                                    type="submit"
-                                    variant="primary"
-                                    className="w-100 mb-3"
-                                    disabled={loading}
-                                    style={{
-                                        borderRadius: '25px',
-                                        padding: '12px',
-                                        backgroundColor: theme.primary,
-                                        borderColor: theme.primary
-                                    }}
-                                >
-                                    {loading ? 'جاري التسجيل...' : 'تسجيل الحساب'}
-                                </Button>
-
-                                <div className="text-center">
-                                    <p className="mb-0">
-                                        لديك حساب بالفعل؟{' '}
-                                        <Link
-                                            to="/login"
-                                            style={{ color: theme.primary, textDecoration: 'none' }}
-                                        >
-                                            سجل دخولك
-                                        </Link>
-                                    </p>
+                                <div className="text-center mt-4" style={{ color: theme.muted }}>
+                                    لديك حساب بالفعل؟{' '}
+                                    <Link
+                                        to="/login"
+                                        style={{
+                                            color: theme.primary,
+                                            textDecoration: 'none',
+                                            fontWeight: '600'
+                                        }}
+                                    >
+                                        سجل دخولك
+                                    </Link>
                                 </div>
                             </Form>
                         </Card.Body>

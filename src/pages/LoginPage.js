@@ -1,138 +1,318 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Card, Form, Button, Alert, Row, Col } from 'react-bootstrap';
+import { Container, Card, Form, Row, Col, InputGroup } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../components/shared/ThemeProvider';
-import AnimatedTitle from '../components/shared/AnimatedTitle';
+import Logo from '../components/shared/Logo';
+import PrimaryButton from '../components/shared/PrimaryButton';
 import AuthContext from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: ''
     });
+    const [errors, setErrors] = useState({});
+    const [validated, setValidated] = useState({});
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
 
     const from = location.state?.from?.pathname || '/';
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+    const { login, isAuthenticated, user, isTeacher } = useContext(AuthContext);
+
+    const [passwordHasText, setPasswordHasText] = useState(false);
+
+    const validateField = (name, value) => {
+        const newErrors = { ...errors };
+        const newValidated = { ...validated };
+
+        if (name === 'username') {
+            if (!value.trim()) {
+                newErrors.username = 'اسم المستخدم مطلوب';
+                newValidated.username = false;
+            } else if (value.includes('@') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                newErrors.username = 'البريد الإلكتروني غير صالح';
+                newValidated.username = false;
+            } else {
+                delete newErrors.username;
+                newValidated.username = true;
+            }
+        }
+
+        if (name === 'password') {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+            if (!value) {
+                newErrors.password = 'كلمة المرور مطلوبة';
+                newValidated.password = false;
+            } else if (!passwordRegex.test(value)) {
+                newErrors.password = 'يجب أن تحتوي كلمة المرور على حرف صغير وحرف كبير ورقم ورمز خاص، وطولها 8 أحرف على الأقل';
+                newValidated.password = false;
+            } else {
+                delete newErrors.password;
+                newValidated.password = true;
+            }
+        }
+
+        setErrors(newErrors);
+        setValidated(newValidated);
     };
 
-    const { login, isAuthenticated, user } = useContext(AuthContext);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        if (name === 'password') {
+            setPasswordHasText(value.length > 0);
+        }
+
+        validateField(name, value);
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        validateField(name, value);
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {};
+        const newValidated = {};
+
+        if (!formData.username.trim()) {
+            newErrors.username = 'اسم المستخدم مطلوب';
+            newValidated.username = false;
+            isValid = false;
+        } else if (formData.username.includes('@') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.username)) {
+            newErrors.username = 'البريد الإلكتروني غير صالح';
+            newValidated.username = false;
+            isValid = false;
+        } else {
+            newValidated.username = true;
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+        if (!formData.password) {
+            newErrors.password = 'كلمة المرور مطلوبة';
+            newValidated.password = false;
+            isValid = false;
+        } else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'يجب أن تحتوي كلمة المرور على حرف صغير وحرف كبير ورقم ورمز خاص، وطولها 8 أحرف على الأقل';
+            newValidated.password = false;
+            isValid = false;
+        } else {
+            newValidated.password = true;
+        }
+
+        setErrors(newErrors);
+        setValidated(newValidated);
+        return isValid;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError('');
+        if (!validateForm()) return;
 
+        setLoading(true);
         try {
             await login(formData);
+            Swal.fire({
+                icon: 'success',
+                title: 'تم تسجيل الدخول بنجاح',
+                showConfirmButton: false,
+                timer: 1500,
+                background: theme.secondary,
+                color: theme.text
+            });
         } catch (error) {
-            setError(error.message || 'خطأ في تسجيل الدخول. يرجى المحاولة مرة أخرى.');
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ في تسجيل الدخول',
+                text: error.message || 'بيانات الدخول غير صحيحة',
+                confirmButtonColor: theme.primary,
+                background: theme.secondary,
+                color: theme.text
+            });
         } finally {
             setLoading(false);
         }
     };
 
-    const { isTeacher } = useContext(AuthContext);
     useEffect(() => {
         if (isAuthenticated && user) {
-            if (isTeacher) {
-                navigate('/admin-dashboard', { replace: true });
-            } else {
-                navigate(from, { replace: true });
-            }
+            const redirectPath = isTeacher ? '/admin-dashboard' : from;
+            navigate(redirectPath, { replace: true });
         }
     }, [isAuthenticated, isTeacher, user, navigate, from]);
 
     return (
-        <Container className="py-5">
+        <Container className="d-flex flex-column justify-content-center min-vh-100 py-5">
             <Row className="justify-content-center">
-                <Col md={6} lg={5}>
-                    <Card className="shadow-lg" style={{
-                        border: 'none',
-                        borderRadius: '15px',
-                        overflow: 'hidden'
+                <Col md={8} lg={6} xl={5}>
+                    <Card className="shadow-lg border-0" style={{
+                        borderRadius: '20px',
+                        overflow: 'hidden',
+                        background: theme.light
                     }}>
-                        <Card.Body className="p-5">
+                        <Card.Body>
                             <div className="text-center mb-4">
-                                <AnimatedTitle level={2} style={{
+                                <Logo size="md" className="mb-4" />
+                                <h2 style={{
                                     color: theme.primary,
+                                    fontWeight: '700',
                                     marginBottom: '10px'
                                 }}>
-                                    تسجيل الدخول
-                                </AnimatedTitle>
-                                <p className="text-muted">
-                                    سجل دخولك للوصول إلى جميع الميزات
+                                    مرحباً بعودتك
+                                </h2>
+                                <p style={{ color: theme.muted }}>
+                                    سجل دخولك للوصول إلى حسابك
                                 </p>
                             </div>
 
-                            {error && (
-                                <Alert variant="danger" className="text-center">
-                                    {error}
-                                </Alert>
-                            )}
-
-                            <Form onSubmit={handleSubmit}>
+                            <Form onSubmit={handleSubmit} noValidate>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>اسم المستخدم</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="username"
-                                        value={formData.username}
-                                        onChange={handleChange}
-                                        required
-                                        style={{ borderRadius: '10px' }}
-                                        placeholder="أدخل اسم المستخدم"
-                                    />
+                                    <Form.Label style={{ fontWeight: '500' }}>اسم المستخدم</Form.Label>
+                                    <InputGroup hasValidation>
+                                        <Form.Control
+                                            type="text"
+                                            name="username"
+                                            value={formData.username}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            isInvalid={!!errors.username}
+                                            isValid={validated.username}
+                                            style={{
+                                                borderRadius: '12px',
+                                                padding: '12px 0',
+                                                textAlign: 'center',
+                                                borderColor: errors.username ? theme.danger : validated.username ? theme.success : '#ddd'
+                                            }}
+                                            placeholder="أدخل اسم المستخدم"
+                                        />
+                                        {validated.username && (
+                                            <InputGroup.Text style={{
+                                                position: 'absolute',
+                                                left: '12px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                zIndex: 5,
+                                                padding: 0
+                                            }}>
+                                            </InputGroup.Text>
+                                        )}
+                                    </InputGroup>
+                                    {errors.username && (
+                                        <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                            {errors.username}
+                                        </div>
+                                    )}
                                 </Form.Group>
 
                                 <Form.Group className="mb-4">
-                                    <Form.Label>كلمة المرور</Form.Label>
-                                    <Form.Control
-                                        type="password"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        required
-                                        style={{ borderRadius: '10px' }}
-                                        placeholder="أدخل كلمة المرور"
-                                        autoComplete="current-password"
-                                    />
+                                    <Form.Label style={{ fontWeight: '500' }}>كلمة المرور</Form.Label>
+                                    <InputGroup hasValidation>
+                                        <Form.Control
+                                            type={showPassword ? 'text' : 'password'}
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            isInvalid={!!errors.password}
+                                            isValid={validated.password}
+                                            style={{
+                                                borderRadius: '12px',
+                                                padding: '12px 0px',
+                                                textAlign: 'center',
+                                                borderColor: errors.password ? theme.danger : validated.password ? theme.success : '#ddd'
+                                            }}
+                                            placeholder="أدخل كلمة المرور"
+                                        />
+                                        {validated.password && (
+                                            <InputGroup.Text style={{
+                                                position: 'absolute',
+                                                left: '12px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                zIndex: 5,
+                                                padding: 0
+                                            }}>
+                                            </InputGroup.Text>
+                                        )}
+                                        {passwordHasText && (
+                                            <span
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: '30px',
+                                                    top: '50%',
+                                                    transform: 'translateY(-50%)',
+                                                    cursor: 'pointer',
+                                                    color: theme.muted,
+                                                    zIndex: 5,
+                                                    padding: '0 8px'
+                                                }}
+                                            >
+                                                <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} style={{ fontSize: '18px' }}></i>
+                                            </span>
+                                        )}
+                                    </InputGroup>
+                                    {errors.password && (
+                                        <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
+                                            {errors.password}
+                                        </div>
+                                    )}
                                 </Form.Group>
 
-                                <Button
-                                    type="submit"
-                                    variant="primary"
-                                    className="w-100 mb-3"
-                                    disabled={loading}
-                                    style={{
-                                        borderRadius: '25px',
-                                        padding: '12px',
-                                        backgroundColor: theme.primary,
-                                        borderColor: theme.primary
-                                    }}
-                                >
-                                    {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
-                                </Button>
+                                <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <Form.Check
+                                        type="checkbox"
+                                        id="remember-me"
+                                        label="تذكرني"
+                                        style={{ color: theme.muted }}
+                                    />
+                                </div>
 
-                                <div className="text-center">
-                                    <p className="mb-0">
-                                        ليس لديك حساب؟{' '}
-                                        <Link
-                                            to="/register"
-                                            style={{ color: theme.primary, textDecoration: 'none' }}
-                                        >
-                                            سجل حساب جديد
-                                        </Link>
-                                    </p>
+                                <div className="d-flex align-items-center justify-content-center">
+                                    <PrimaryButton
+                                        type="submit"
+                                        className="w-50 mb-3"
+                                        disabled={loading}
+                                        style={{
+                                            fontSize: '1.1rem',
+                                            padding: '14px',
+                                        }}
+                                    >
+                                        {loading ? (
+                                            <span className="d-flex align-items-center justify-content-center">
+                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                جاري تسجيل الدخول...
+                                            </span>
+                                        ) : 'تسجيل الدخول'}
+                                    </PrimaryButton>
+                                </div>
+
+                                <div className="text-center mt-4" style={{ color: theme.muted }}>
+                                    ليس لديك حساب؟{' '}
+                                    <Link
+                                        to="/register"
+                                        style={{
+                                            color: theme.primary,
+                                            textDecoration: 'none',
+                                            fontWeight: '600'
+                                        }}
+                                    >
+                                        سجل حساب جديد
+                                    </Link>
                                 </div>
                             </Form>
                         </Card.Body>

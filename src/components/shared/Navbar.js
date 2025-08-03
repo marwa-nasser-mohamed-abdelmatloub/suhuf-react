@@ -138,8 +138,7 @@ const CustomNavbar = () => {
                                 <>
                                     <span style={{ color: theme.primary, fontWeight: 'bold', marginRight: 10 }}>
                                         أهلاً،
-                                        {user?.is_quran_teacher}
-                                        {user?.is_student}
+                                            {user?.first_name || user?.username || 'مستخدم'}
                                     </span>
                                     <PrimaryButton
                                         className="d-flex align-items-center"

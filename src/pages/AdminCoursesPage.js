@@ -20,7 +20,7 @@ const AdminCoursesPage = () => {
             setCourses(data);
             setError('');
         } catch (err) {
-            setError(err.message || 'فشل في تحميل الكورسات');
+            setError(err.message || 'فشل في تحميل الدورات');
         } finally {
             setLoading(false);
         }
@@ -31,7 +31,7 @@ const AdminCoursesPage = () => {
             await createCourse(courseData);
             await loadCourses();
         } catch (err) {
-            setError(err.message || 'فشل في إنشاء الكورس');
+            setError(err.message || 'فشل في إنشاء الدورة');
         }
     };
 
@@ -40,7 +40,7 @@ const AdminCoursesPage = () => {
             await updateCourse(courseData.id, courseData);
             await loadCourses();
         } catch (err) {
-            setError(err.message || 'فشل في تحديث الكورس');
+            setError(err.message || 'فشل في تحديث الدورة');
         }
     };
 
@@ -48,9 +48,9 @@ const AdminCoursesPage = () => {
         loadCourses();
     }, []);
 
-    const getLevelCount = (level) => {
-        return courses.filter(c => c.level === level).length;
-    };
+    // const getLevelCount = (level) => {
+    //     return courses.filter(c => c.level === level).length;
+    // };
 
     return (
         <div className="admin-dashboard-wrapper" style={{ minHeight: '100vh', background: theme.secondary, overflowX: 'hidden' }}>
@@ -61,7 +61,7 @@ const AdminCoursesPage = () => {
                     <Container fluid className="p-2 p-md-4" style={{ minHeight: '100vh' }}>
                         <h2 className="mb-4 fw-bold" style={{ color: theme.primary, fontSize: '1.5rem' }}>
                             <i className="fas fa-book ms-2"></i>
-                            إدارة الكورسات
+                            إدارة الدورات
                         </h2>
 
                         {error && (
@@ -73,12 +73,12 @@ const AdminCoursesPage = () => {
                         <Row className="mb-4 g-3 g-md-4">
                             <Col xs={12} sm={6} md={3} className="mb-2 mb-md-0">
                                 <StatCard
-                                    title="إجمالي الكورسات"
+                                    title="إجمالي الدورات"
                                     value={courses.length}
                                     color={theme.primary}
                                 />
                             </Col>
-                            <Col xs={12} sm={6} md={3} className="mb-2 mb-md-0">
+                            {/* <Col xs={12} sm={6} md={3} className="mb-2 mb-md-0">
                                 <StatCard
                                     title="كورسات المبتدئين"
                                     value={getLevelCount('beginner')}
@@ -98,13 +98,13 @@ const AdminCoursesPage = () => {
                                     value={getLevelCount('advanced')}
                                     color={theme.danger}
                                 />
-                            </Col>
+                            </Col> */}
                         </Row>
 
                         {loading ? (
                             <div className="text-center py-5">
                                 <Spinner animation="border" />
-                                <div>جاري تحميل الكورسات...</div>
+                                <div>جاري تحميل الدورات...</div>
                             </div>
                         ) : (
                             <CoursesTable

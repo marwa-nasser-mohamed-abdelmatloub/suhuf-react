@@ -6,6 +6,7 @@ import Logo from '../components/shared/Logo';
 import PrimaryButton from '../components/shared/PrimaryButton';
 import AuthContext from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
+import { checkUsernameAvailability, checkEmailAvailability, checkPhoneAvailability } from '../services/api';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -23,11 +24,12 @@ const RegisterPage = () => {
     const [showPassword2, setShowPassword2] = useState(false);
     const [passwordHasText, setPasswordHasText] = useState(false);
     const [password2HasText, setPassword2HasText] = useState(false);
+    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
     const { login, isTeacher, isAuthenticated } = useContext(AuthContext);
 
-    const validateField = (name, value) => {
+    const validateField = async (name, value) => {
         const newErrors = { ...errors };
         const newValidated = { ...validated };
         const phoneRegex = /^01[0125][0-9]{8}$/;
@@ -40,8 +42,16 @@ const RegisterPage = () => {
                 newErrors.username = 'يجب أن يكون اسم المستخدم 4 أحرف على الأقل';
                 newValidated.username = false;
             } else {
-                delete newErrors.username;
-                newValidated.username = true;
+                setIsCheckingAvailability(true);
+                const isAvailable = await checkUsernameAvailability(value);
+                setIsCheckingAvailability(false);
+                if (!isAvailable) {
+                    newErrors.username = 'اسم المستخدم غير متاح';
+                    newValidated.username = false;
+                } else {
+                    delete newErrors.username;
+                    newValidated.username = true;
+                }
             }
         }
 
@@ -53,8 +63,16 @@ const RegisterPage = () => {
                 newErrors.email = 'بريد إلكتروني غير صالح';
                 newValidated.email = false;
             } else {
-                delete newErrors.email;
-                newValidated.email = true;
+                setIsCheckingAvailability(true);
+                const isAvailable = await checkEmailAvailability(value);
+                setIsCheckingAvailability(false);
+                if (!isAvailable) {
+                    newErrors.email = 'البريد الإلكتروني غير متاح';
+                    newValidated.email = false;
+                } else {
+                    delete newErrors.email;
+                    newValidated.email = true;
+                }
             }
         }
 
@@ -64,6 +82,7 @@ const RegisterPage = () => {
                 newValidated.full_name = false;
             } else if (value.length < 4) {
                 newErrors.full_name = 'يجب أن يكون الاسم 4 أحرف على الأقل';
+                newValidated.full_name = false;
             } else {
                 delete newErrors.full_name;
                 newValidated.full_name = true;
@@ -78,8 +97,16 @@ const RegisterPage = () => {
                 newErrors.phone_number = 'رقم هاتف غير صالح (يجب أن يبدأ بـ 01)';
                 newValidated.phone_number = false;
             } else {
-                delete newErrors.phone_number;
-                newValidated.phone_number = true;
+                setIsCheckingAvailability(true);
+                const isAvailable = await checkPhoneAvailability(value);
+                setIsCheckingAvailability(false);
+                if (!isAvailable) {
+                    newErrors.phone_number = 'رقم الهاتف غير متاح';
+                    newValidated.phone_number = false;
+                } else {
+                    delete newErrors.phone_number;
+                    newValidated.phone_number = true;
+                }
             }
         }
 
@@ -130,12 +157,12 @@ const RegisterPage = () => {
         validateField(name, type === 'checkbox' ? checked : value);
     };
 
-    const handleBlur = (e) => {
+    const handleBlur = async (e) => {
         const { name, value } = e.target;
-        validateField(name, value);
+        await validateField(name, value);
     };
 
-    const validateForm = () => {
+    const validateForm = async () => {
         let isValid = true;
         const newErrors = {};
         const newValidated = {};
@@ -150,7 +177,14 @@ const RegisterPage = () => {
             newValidated.username = false;
             isValid = false;
         } else {
-            newValidated.username = true;
+            const isAvailable = await checkUsernameAvailability(formData.username);
+            if (!isAvailable) {
+                newErrors.username = 'اسم المستخدم غير متاح';
+                newValidated.username = false;
+                isValid = false;
+            } else {
+                newValidated.username = true;
+            }
         }
 
         if (!formData.email) {
@@ -162,11 +196,22 @@ const RegisterPage = () => {
             newValidated.email = false;
             isValid = false;
         } else {
-            newValidated.email = true;
+            const isAvailable = await checkEmailAvailability(formData.email);
+            if (!isAvailable) {
+                newErrors.email = 'البريد الإلكتروني غير متاح';
+                newValidated.email = false;
+                isValid = false;
+            } else {
+                newValidated.email = true;
+            }
         }
 
         if (!formData.full_name) {
             newErrors.full_name = 'الاسم الكامل مطلوب';
+            newValidated.full_name = false;
+            isValid = false;
+        } else if (formData.full_name.length < 4) {
+            newErrors.full_name = 'يجب أن يكون الاسم 4 أحرف على الأقل';
             newValidated.full_name = false;
             isValid = false;
         } else {
@@ -182,7 +227,14 @@ const RegisterPage = () => {
             newValidated.phone_number = false;
             isValid = false;
         } else {
-            newValidated.phone_number = true;
+            const isAvailable = await checkPhoneAvailability(formData.phone_number);
+            if (!isAvailable) {
+                newErrors.phone_number = 'رقم الهاتف غير متاح';
+                newValidated.phone_number = false;
+                isValid = false;
+            } else {
+                newValidated.phone_number = true;
+            }
         }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
@@ -219,9 +271,10 @@ const RegisterPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) return;
+        if (!await validateForm()) return;
 
         setLoading(true);
+        setErrors({});
         try {
             const body = {
                 username: formData.username,
@@ -242,10 +295,16 @@ const RegisterPage = () => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+                const fieldErrors = {};
+                if (errorData.username) fieldErrors.username = errorData.username[0];
+                if (errorData.email) fieldErrors.email = errorData.email[0];
+                if (errorData.phone_number) fieldErrors.phone_number = errorData.phone_number[0];
+                setErrors(prev => ({ ...prev, ...fieldErrors }));
                 throw new Error(
                     errorData.message ||
                     errorData.username?.[0] ||
                     errorData.email?.[0] ||
+                    errorData.phone_number?.[0] ||
                     'حدث خطأ أثناء التسجيل'
                 );
             }
@@ -263,14 +322,6 @@ const RegisterPage = () => {
             await login({ username: formData.username, password: formData.password });
             setRedirectAfterRegister(true);
         } catch (error) {
-            await Swal.fire({
-                icon: 'error',
-                title: 'خطأ في التسجيل',
-                text: error.message || 'حدث خطأ غير متوقع أثناء التسجيل',
-                confirmButtonColor: theme.primary,
-                background: theme.secondary,
-                color: theme.text
-            });
         } finally {
             setLoading(false);
         }
@@ -278,7 +329,7 @@ const RegisterPage = () => {
 
     useEffect(() => {
         if (redirectAfterRegister && isAuthenticated) {
-            navigate(isTeacher ? '/admin-dashboard' : '/', { replace: true });
+            navigate(isTeacher ? '/admin' : '/', { replace: true });
         }
     }, [redirectAfterRegister, isAuthenticated, isTeacher, navigate]);
 
@@ -328,6 +379,21 @@ const RegisterPage = () => {
                                                     }}
                                                     placeholder="أدخل اسم المستخدم"
                                                 />
+                                                {isCheckingAvailability && (
+                                                    <span
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '30px',
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)',
+                                                            color: theme.muted,
+                                                            zIndex: 5,
+                                                            padding: '0 8px'
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-spinner fa-spin" style={{ fontSize: '18px' }}></i>
+                                                    </span>
+                                                )}
                                             </InputGroup>
                                             {errors.username && (
                                                 <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
@@ -356,6 +422,21 @@ const RegisterPage = () => {
                                                     }}
                                                     placeholder="أدخل البريد الإلكتروني"
                                                 />
+                                                {isCheckingAvailability && (
+                                                    <span
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '30px',
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)',
+                                                            color: theme.muted,
+                                                            zIndex: 5,
+                                                            padding: '0 8px'
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-spinner fa-spin" style={{ fontSize: '18px' }}></i>
+                                                    </span>
+                                                )}
                                             </InputGroup>
                                             {errors.email && (
                                                 <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
@@ -415,6 +496,21 @@ const RegisterPage = () => {
                                                     }}
                                                     placeholder="أدخل رقم الهاتف"
                                                 />
+                                                {isCheckingAvailability && (
+                                                    <span
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '30px',
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)',
+                                                            color: theme.muted,
+                                                            zIndex: 5,
+                                                            padding: '0 8px'
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-spinner fa-spin" style={{ fontSize: '18px' }}></i>
+                                                    </span>
+                                                )}
                                             </InputGroup>
                                             {errors.phone_number && (
                                                 <div className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
@@ -522,7 +618,7 @@ const RegisterPage = () => {
                                     <PrimaryButton
                                         type="submit"
                                         className="w-50 mb-3"
-                                        disabled={loading}
+                                        disabled={loading || isCheckingAvailability}
                                         style={{
                                             fontSize: '1.1rem',
                                             padding: '14px'

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Badge } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { useTheme } from '../shared/ThemeProvider';
 import PrimaryButton from '../shared/PrimaryButton';
 import AnimatedTitle from '../shared/AnimatedTitle';
@@ -7,33 +7,34 @@ import AnimatedTitle from '../shared/AnimatedTitle';
 const CourseCard = ({ course }) => {
     const theme = useTheme();
 
-    const getLevelBadgeVariant = (level) => {
-        switch (level) {
-            case 'beginner':
-                return 'success';
-            case 'intermediate':
-                return 'warning';
-            case 'advanced':
-                return 'danger';
-            default:
-                return 'primary';
-        }
-    };
+    // const getLevelBadgeVariant = (level) => {
+    //     switch (level) {
+    //         case 'beginner':
+    //             return 'success';
+    //         case 'intermediate':
+    //             return 'warning';
+    //         case 'advanced':
+    //             return 'danger';
+    //         default:
+    //             return 'primary';
+    //     }
+    // };
 
-    const getLevelText = (level) => {
-        switch (level) {
-            case 'beginner':
-                return 'مبتدئ';
-            case 'intermediate':
-                return 'متوسط';
-            case 'advanced':
-                return 'متقدم';
-            default:
-                return level;
-        }
-    };
+    // const getLevelText = (level) => {
+    //     switch (level) {
+    //         case 'beginner':
+    //             return 'مبتدئ';
+    //         case 'intermediate':
+    //             return 'متوسط';
+    //         case 'advanced':
+    //             return 'متقدم';
+    //         default:
+    //             return level;
+    //     }
+    // };
 
     return (
+        <>
         <Card
             className="mb-4 shadow-sm course-card"
             style={{
@@ -57,21 +58,21 @@ const CourseCard = ({ course }) => {
                 />
             )}
             <div className="course-card-overlay"></div>
-            <Card.Body className="d-flex flex-column position-relative" style={{ zIndex: 2 }}>
+            <Card.Body className="d-flex flex-column justify-content-center align-items-center text-center position-relative" style={{ zIndex: 2 }}>
                 <div className="d-flex justify-content-between align-items-start mb-2">
                     <AnimatedTitle level={5} style={{ marginBottom: '0', flex: 1 }}>
                         {course.title}
                     </AnimatedTitle>
-                    <Badge 
+                    {/* <Badge 
                         bg={getLevelBadgeVariant(course.level)}
                         className="ms-2"
                         style={{ fontSize: '0.7rem' }}
                     >
                         {getLevelText(course.level)}
-                    </Badge>
+                    </Badge> */}
                 </div>
                 
-                <Card.Text className="text-muted" style={{ flex: 1, fontSize: '0.9rem' }}>
+                <Card.Text className="text-muted" style={{ flex: 1, fontSize: '1.1rem' }}>
                     {course.description.length > 120 
                         ? `${course.description.substring(0, 120)}...` 
                         : course.description
@@ -80,18 +81,13 @@ const CourseCard = ({ course }) => {
                 
                 <div className="course-info mb-3">
                     {course.instructor && (
-                        <div className="text-muted mb-1" style={{ fontSize: '0.85rem' }}>
-                            <strong>المدرب:</strong> {course.instructor}
-                        </div>
-                    )}
-                    {course.duration && (
-                        <div className="text-muted mb-1" style={{ fontSize: '0.85rem' }}>
-                            <strong>المدة:</strong> {course.duration}
+                        <div className="text-muted mb-1" style={{ fontSize: '1rem' }}>
+                            <strong>المعلم/ة:</strong> {course.instructor}
                         </div>
                     )}
                 </div>
                 
-                <Card.Text
+                {/* <Card.Text
                     className="text-muted course-price"
                     style={{
                         fontWeight: '600',
@@ -101,7 +97,7 @@ const CourseCard = ({ course }) => {
                     }}
                 >
                     السعر: {course.price} جنيه مصري
-                </Card.Text>
+                </Card.Text> */}
                 
                 <div className="mt-auto">
                     <PrimaryButton
@@ -114,7 +110,16 @@ const CourseCard = ({ course }) => {
                 </div>
             </Card.Body>
         </Card>
+            <style>{`
+                .course-card {
+                    transition: transform 0.3s;
+                }
+                .course-card:hover {
+                    transform: translateY(-10px) !important;
+                }
+            `}</style>
+        </>
     );
 };
-
+            
 export default CourseCard;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import PrimaryButton from '../shared/PrimaryButton';
 import { useTheme } from '../shared/ThemeProvider';
 import heroImage from '../../assets/images/start.jpg';
 
@@ -20,7 +19,6 @@ const Start = () => {
                 direction: 'rtl'
             }}
         >
-            {/* Overlay */}
             <div
                 style={{
                     position: 'absolute',
@@ -44,57 +42,45 @@ const Start = () => {
                 }}
             >
                 <Row
-                    className="align-items-center justify-content-center flex-row-reverse w-100"
+                    className="align-items-center justify-content-center w-100"
                     style={{ maxWidth: '1200px' }}
                 >
-                    {/* زرار الفيديو */}
-                    <Col
-                        md={6}
-                        className="d-flex justify-content-center justify-content-md-end mb-4 mb-md-0 video-col"
-                        style={{ marginTop: '80px' }}
-                    >
-                        <button
-                            className="btn rounded-circle position-relative video-pulse-btn"
-                            style={{
-                                backgroundColor: theme.primary,
-                                color: theme.light,
-                                width: '70px',
-                                height: '70px',
-                                fontSize: '28px',
-                                border: `5px solid rgba(255,255,255,0.6)`,
-                                zIndex: 2
-                            }}
-                            onClick={() => setShowVideo(true)}
-                        >
-                            <span className="video-pulse-outer" style={{
-                                background: theme.primary,
-                                opacity: 0.2
-                            }}></span>
-                            <i className="bi bi-play-fill position-relative" style={{ zIndex: 2 }}></i>
-                        </button>
-                    </Col>
-
-                    {/* النصوص والزرار */}
-                    <Col md={6} className="text-center text-md-end">
+                    <Col xs={12} md={6} className="text-center text-md-end mb-4 mb-md-0">
                         <h1 className="fw-bold mb-4" style={{ fontSize: '3rem' }}>
                             لنبدأ بتعلم القرآن الكريم <br /> عبر الإنترنت
                         </h1>
-                        <PrimaryButton
-                            className="mt-2"
-                            style={{
-                                padding: '12px 30px',
-                                fontSize: '1.1rem',
-                                backgroundColor: theme.primary,
-                                borderColor: theme.primary
-                            }}
-                        >
-                            ابدأ تجربة مجانية
-                        </PrimaryButton>
+                    </Col>
+
+                    <Col xs={12} md={6} className="d-flex justify-content-center justify-content-md-end">
+                        <div className="video-btn-wrapper" style={{ marginTop: '20px' }}>
+                            <button
+                                className="btn rounded-circle position-relative video-pulse-btn d-flex align-items-center justify-content-center"                                style={{
+                                    backgroundColor: theme.primary,
+                                    color: theme.light,
+                                    width: '70px',
+                                    height: '70px',
+                                    fontSize: '28px',
+                                    border: `5px solid rgba(255,255,255,0.6)`,
+                                    zIndex: 2,
+                                    paddingLeft: '5px'
+                                }}
+                                onClick={() => setShowVideo(true)}
+                            >
+                                <span className="video-pulse-outer" style={{
+                                    background: theme.primary,
+                                    opacity: 0.2
+                                }}></span>
+                                <i className="bi bi-play-fill" style={{
+                                    fontSize: '28px',
+                                    position: 'relative',
+                                    left: '4px' 
+                                }}></i>
+                            </button>
+                        </div>
                     </Col>
                 </Row>
             </Container>
 
-            {/* نافذة الفيديو */}
             {showVideo && (
                 <div
                     className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
@@ -114,7 +100,6 @@ const Start = () => {
             )}
 
             <style>{`
-                /* نبض زر الفيديو */
                 .video-pulse-btn {
                     position: relative;
                 }
@@ -136,7 +121,6 @@ const Start = () => {
                     100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
                 }
 
-                /* الشاشات الصغيرة */
                 @media (max-width: 767.98px) {
                     h1 { font-size: 2rem !important; }
                     .video-pulse-btn {
@@ -149,11 +133,14 @@ const Start = () => {
                         height: 70px;
                     }
 
-                    /* خلي زرار الفيديو تحت النصوص ويتسنتر */
-                    .video-col {
-                        order: 2;
-                        margin-top: 20px !important;
-                        justify-content: center !important;
+                    .video-btn-wrapper {
+                        margin-top: 0 !important;
+                    }
+                }
+
+                @media (min-width: 768px) and (max-width: 991.98px) {
+                    .video-btn-wrapper {
+                        margin-top: 40px !important;
                     }
                 }
             `}</style>

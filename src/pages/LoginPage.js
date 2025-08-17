@@ -146,7 +146,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (isAuthenticated && user) {
-            const redirectPath = isTeacher ? '/admin-dashboard' : from;
+            const redirectPath = isTeacher ? '/admin' : from;
             navigate(redirectPath, { replace: true });
         }
     }, [isAuthenticated, isTeacher, user, navigate, from]);
@@ -272,15 +272,6 @@ const LoginPage = () => {
                                         </div>
                                     )}
                                 </Form.Group>
-
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <Form.Check
-                                        type="checkbox"
-                                        id="remember-me"
-                                        label="تذكرني"
-                                        style={{ color: theme.muted }}
-                                    />
-                                </div>
 
                                 <div className="d-flex align-items-center justify-content-center">
                                     <PrimaryButton

@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useTheme } from '../shared/ThemeProvider';
 
-import missionImg from '../../assets/images/mission.jpg';
+import missionImg from "../../assets/images/about3.jpg";
 import visionImg from '../../assets/images/vision.jpg';
 import valuesImg from '../../assets/images/values.jpg';
 
@@ -13,7 +13,7 @@ const AboutCardsSection = () => {
         {
             title: 'رسالتنا',
             image: missionImg,
-            text: 'نسعى لنشر تعليم القرآن الكريم وتعاليمه السامية بأساليب تفاعلية ومناسبة لجميع الأعمار.'
+            text: 'في أكاديمية صحف ، نؤمن أن غرس حب القرآن في قلوب الأطفال هو استثمار أبدي. نقدم برامج تعليمية تجمع بين الأصالة والطرق الحديثة، لنربي جيلًا متمسكًا بكتاب الله.'
         },
         {
             title: 'رؤيتنا',

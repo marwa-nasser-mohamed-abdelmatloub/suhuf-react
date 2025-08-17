@@ -4,19 +4,24 @@ import { useTheme } from '../shared/ThemeProvider';
 
 const features = [
     {
-        icon: 'bi-person-lines-fill',
-        title: 'مدرسون محترفون',
+        icon: 'bi-book',
+        title: 'معلمين ومعلمات معتمدين بخبرة عالية',
         description: 'نخبة من المعلمين المتخصصين في تعليم القرآن الكريم والتجويد.'
     },
     {
-        icon: 'bi-camera-video',
-        title: 'حصص أونلاين',
-        description: 'تعلّم عن بعد من خلال دروس تفاعلية في أي وقت ومن أي مكان.'
+        icon: 'bi-heart-fill',
+        title: 'أسلوب تعليمي ممتع ومحفّز',
+        description: 'نقدّم طرق تدريس تفاعلية تُحبب الطلاب في التعلم وتحفّزهم على الاستمرار.'
     },
     {
-        icon: 'bi-person-fill',
-        title: 'معلمات للنساء',
-        description: 'نوفر معلمات مؤهلات لتدريس النساء والفتيات بكل خصوصية.'
+        icon: 'bi-clock-fill',
+        title: 'أوقات مرنة تناسب الجميع',
+        description: 'إمكانية اختيار الأوقات التي تناسبك لضمان استمرارية التعلم.'
+    },
+    {
+        icon: 'bi-award-fill',
+        title: 'شهادات معتمدة عند الإنجاز',
+        description: 'نوفر شهادات معتمدة لكل من يتم دراسته وإتمامه بنجاح.'
     }
 ];
 
@@ -28,7 +33,7 @@ const FeaturesSection = () => {
             <Container>
                 <Row className="text-center">
                     {features.map((feature, index) => (
-                        <Col md={4} key={index} className="mb-5">
+                        <Col xs={12} sm={6} md={3} key={index} className="mb-5">
                             <div
                                 style={{
                                     width: '80px',

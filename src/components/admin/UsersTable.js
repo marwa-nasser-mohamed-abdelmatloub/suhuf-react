@@ -3,21 +3,20 @@ import { Card, Table, Form, InputGroup, Badge, Dropdown } from 'react-bootstrap'
 import { useTheme } from '../shared/ThemeProvider';
 import UserForm from './UserForm';
 import { deleteUser, registerUser, updateUser } from '../../services/api';
+import Swal from 'sweetalert2';
 import PrimaryButton from '../shared/PrimaryButton';
-import ConfirmationModal from './ConfirmationModal';
 
-const UsersTable = ({ users, refreshUsers, onCreate, onUpdate }) => {
+const UsersTable = ({ users, refreshUsers }) => {
     const theme = useTheme();
     const [showForm, setShowForm] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [userTypeFilter, setUserTypeFilter] = useState('');
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const filteredUsers = users.filter(user => {
-        const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const matchesSearch =
+            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (user.full_name && user.full_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -47,37 +46,69 @@ const UsersTable = ({ users, refreshUsers, onCreate, onUpdate }) => {
         setShowForm(true);
     };
 
-    const handleDeleteClick = (user) => {
-        setUserToDelete(user);
-        setShowDeleteModal(true);
-    };
-
-    const confirmDelete = async () => {
-        try {
-            await deleteUser(userToDelete.id);
-            setShowDeleteModal(false);
-            refreshUsers();
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            alert(error.message || 'حدث خطأ أثناء حذف المستخدم');
+    const handleDeleteClick = async (user) => {
+        const result = await Swal.fire({
+            title: 'هل أنت متأكد من حذف المستخدم؟',
+            text: `سيتم حذف المستخدم "${user.full_name || user.username}" نهائيًا ولا يمكن استرجاعه!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'نعم، احذف',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        });
+        if (result.isConfirmed) {
+            try {
+                await deleteUser(user.id);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'تم حذف المستخدم بنجاح',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                refreshUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ أثناء حذف المستخدم',
+                    text: error.message || 'حدث خطأ أثناء حذف المستخدم',
+                    showConfirmButton: true
+                });
+            }
         }
     };
 
     const handleUserSubmit = async (userData) => {
         setIsSubmitting(true);
         try {
-            if (userData.id) {
-                const updateData = { ...userData };
-                delete updateData.password;
-                delete updateData.confirm_password;
-                await updateUser(userData.id, updateData);
+            if (currentUser) {
+                await updateUser(currentUser.id, userData);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'تم تعديل المستخدم بنجاح',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             } else {
                 await registerUser(userData);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'تم إضافة المستخدم بنجاح',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
             setShowForm(false);
             refreshUsers();
         } catch (error) {
-            alert(error.message || 'حدث خطأ أثناء حفظ المستخدم');
+            await Swal.fire({
+                icon: 'error',
+                title: 'خطأ أثناء حفظ المستخدم',
+                text: error.message || 'حدث خطأ أثناء حفظ المستخدم',
+                showConfirmButton: true
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -85,7 +116,7 @@ const UsersTable = ({ users, refreshUsers, onCreate, onUpdate }) => {
 
     const getUserTypeBadge = (user) => {
         if (user.is_quran_teacher) {
-            return <Badge bg="info">مدرس</Badge>;
+            return <Badge bg="info">معلم/ة</Badge>;
         } else if (user.is_student) {
             return <Badge bg="success">طالب</Badge>;
         } else {
@@ -123,13 +154,13 @@ const UsersTable = ({ users, refreshUsers, onCreate, onUpdate }) => {
                         <Dropdown.Toggle variant="outline-secondary" id="dropdown-filter" className="w-100 w-md-auto">
                             <i className="fas fa-filter ms-2"></i>
                             {userTypeFilter === 'student' ? 'طلاب' :
-                                userTypeFilter === 'teacher' ? 'مدرسين' :
+                                userTypeFilter === 'teacher' ? 'معلمين' :
                                     userTypeFilter === 'other' ? 'آخرون' : 'جميع الأنواع'}
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={() => setUserTypeFilter('')}>الكل</Dropdown.Item>
                             <Dropdown.Item onClick={() => setUserTypeFilter('student')}>طلاب</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setUserTypeFilter('teacher')}>مدرسين</Dropdown.Item>
+                            <Dropdown.Item onClick={() => setUserTypeFilter('teacher')}>معلمين</Dropdown.Item>
                             <Dropdown.Item onClick={() => setUserTypeFilter('other')}>آخرون</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
@@ -145,25 +176,25 @@ const UsersTable = ({ users, refreshUsers, onCreate, onUpdate }) => {
                         <Table striped bordered hover className="text-center align-middle mb-0 w-100" style={{ minWidth: '100%', tableLayout: 'auto' }}>
                             <thead style={{ background: theme.primary, color: theme.light }}>
                                 <tr>
-                                    <th style={{ whiteSpace: 'nowrap', minWidth: 40 }}>#</th>
-                                    <th style={{ minWidth: 80, wordBreak: 'break-word', overflowWrap: 'break-word' }}>الاسم</th>
-                                    <th style={{ minWidth: 100, wordBreak: 'break-word', overflowWrap: 'break-word' }}>البريد</th>
-                                    <th style={{ minWidth: 80, wordBreak: 'break-word', overflowWrap: 'break-word' }}>رقم الهاتف</th>
-                                    <th style={{ minWidth: 70, wordBreak: 'break-word', overflowWrap: 'break-word' }}>نوع المستخدم</th>
-                                    <th style={{ minWidth: 60, wordBreak: 'break-word', overflowWrap: 'break-word' }}>الرصيد</th>
-                                    <th style={{ minWidth: 70, wordBreak: 'break-word', overflowWrap: 'break-word' }}>الإجراءات</th>
+                                    <th>#</th>
+                                    <th>الاسم</th>
+                                    <th>البريد</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>نوع المستخدم</th>
+                                    {/* <th>الرصيد</th> */}
+                                    <th>الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredUsers.map((user, idx) => (
                                     <tr key={user.id}>
                                         <td>{idx + 1}</td>
-                                        <td style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: 120 }}>{user.full_name || user.username}</td>
-                                        <td style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: 150 }}>{user.email}</td>
-                                        <td style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: 100 }}>{user.phone_number || '-'}</td>
-                                        <td style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: 90 }}>{getUserTypeBadge(user)}</td>
-                                        <td style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: 80 }}>{user.credit || 0} ر.س</td>
-                                        <td style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: 90 }}>
+                                        <td>{user.full_name || user.username}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.phone_number || '-'}</td>
+                                        <td>{getUserTypeBadge(user)}</td>
+                                        {/* <td>{user.credit || 0} ر.س</td> */}
+                                        <td>
                                             <Dropdown>
                                                 <Dropdown.Toggle variant="link" id="dropdown-actions">
                                                     <i className="fas fa-ellipsis-v"></i>
@@ -194,14 +225,6 @@ const UsersTable = ({ users, refreshUsers, onCreate, onUpdate }) => {
                     initialData={currentUser || {}}
                     isEdit={!!currentUser}
                     isSubmitting={isSubmitting}
-                />
-
-                <ConfirmationModal
-                    show={showDeleteModal}
-                    onHide={() => setShowDeleteModal(false)}
-                    onConfirm={confirmDelete}
-                    title="حذف المستخدم"
-                    message={`هل أنت متأكد من رغبتك في حذف المستخدم "${userToDelete?.username}"؟`}
                 />
             </Card.Body>
         </Card>

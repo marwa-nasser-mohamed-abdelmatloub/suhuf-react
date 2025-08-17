@@ -3,53 +3,39 @@ import { Container, Card, Row, Col, Badge, Button } from 'react-bootstrap';
 import { useTheme } from '../shared/ThemeProvider';
 import PrimaryButton from '../shared/PrimaryButton';
 import AnimatedTitle from '../shared/AnimatedTitle';
-import { Link, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; // [REHAB] استخدم SweetAlert2
+import { Link } from 'react-router-dom';
 
 const CourseDetails = ({ course }) => {
     const theme = useTheme();
-    const navigate = useNavigate();
 
-    const getLevelBadgeVariant = (level) => {
-        switch (level) {
-            case 'beginner':
-                return 'success';
-            case 'intermediate':
-                return 'warning';
-            case 'advanced':
-                return 'danger';
-            default:
-                return 'primary';
-        }
-    };
+    // const getLevelBadgeVariant = (level) => {
+    //     switch (level) {
+    //         case 'beginner':
+    //             return 'success';
+    //         case 'intermediate':
+    //             return 'warning';
+    //         case 'advanced':
+    //             return 'danger';
+    //         default:
+    //             return 'primary';
+    //     }
+    // };
 
-    const getLevelText = (level) => {
-        switch (level) {
-            case 'beginner':
-                return 'مبتدئ';
-            case 'intermediate':
-                return 'متوسط';
-            case 'advanced':
-                return 'متقدم';
-            default:
-                return level;
-        }
-    };
+    // const getLevelText = (level) => {
+    //     switch (level) {
+    //         case 'beginner':
+    //             return 'مبتدئ';
+    //         case 'intermediate':
+    //             return 'متوسط';
+    //         case 'advanced':
+    //             return 'متقدم';
+    //         default:
+    //             return level;
+    //     }
+    // };
 
     const handleBooking = () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login', { state: { from: { pathname: `/courses/${course.id}` } } });
-        } else {
-            // [REHAB] استخدم SweetAlert2 بدلاً من alert
-            Swal.fire({
-                title: 'قريباً!',
-                text: 'سيتم إضافة منطق الحجز قريباً!',
-                icon: 'info',
-                confirmButtonText: 'حسناً',
-                confirmButtonColor: '#8e24aa'
-            });
-        }
+        window.open('https://wa.me/201112922085', '_blank');
     };
 
     if (!course) {
@@ -64,15 +50,15 @@ const CourseDetails = ({ course }) => {
         <Container className="py-5 course-details" data-aos="fade-in">
             <div className="text-center mb-4">
                 <Link to="/courses">
-                    <Button 
-                        variant="outline-primary" 
+                    <Button
+                        variant="outline-primary"
                         style={{ borderRadius: '25px', padding: '8px 20px' }}
                     >
-                        ← العودة لصفحة الكورسات
+                        ← العودة لصفحة الدورات
                     </Button>
                 </Link>
             </div>
-            
+
             <Card className="shadow-lg" style={{
                 border: 'none',
                 borderRadius: '15px',
@@ -80,9 +66,9 @@ const CourseDetails = ({ course }) => {
                 transition: 'all 0.5s ease'
             }}>
                 {course.image && (
-                    <Card.Img 
-                        variant="top" 
-                        src={course.image} 
+                    <Card.Img
+                        variant="top"
+                        src={course.image}
                         alt={course.title}
                         style={{ height: '300px', objectFit: 'cover' }}
                     />
@@ -94,15 +80,15 @@ const CourseDetails = ({ course }) => {
                                 <AnimatedTitle level={2} style={{ marginBottom: '0', flex: 1 }}>
                                     {course.title}
                                 </AnimatedTitle>
-                                <Badge 
+                                {/* <Badge 
                                     bg={getLevelBadgeVariant(course.level)}
                                     className="ms-3"
                                     style={{ fontSize: '0.9rem', padding: '8px 12px' }}
                                 >
                                     {getLevelText(course.level)}
-                                </Badge>
+                                </Badge> */}
                             </div>
-                            
+
                             <p className="text-muted" style={{
                                 fontSize: '1.1rem',
                                 lineHeight: '1.8',
@@ -110,28 +96,21 @@ const CourseDetails = ({ course }) => {
                             }}>
                                 {course.description}
                             </p>
-                            
+
                             <div className="course-info mt-4">
                                 <Row>
                                     {course.instructor && (
                                         <Col md={6} className="mb-3">
                                             <div className="info-item">
-                                                <strong>المدرب:</strong> {course.instructor}
-                                            </div>
-                                        </Col>
-                                    )}
-                                    {course.duration && (
-                                        <Col md={6} className="mb-3">
-                                            <div className="info-item">
-                                                <strong>المدة:</strong> {course.duration}
+                                                <strong>المعلم/ة:</strong> {course.instructor}
                                             </div>
                                         </Col>
                                     )}
                                 </Row>
                             </div>
-                            
+
                             <div className="course-meta mt-4">
-                                <Badge
+                                {/* <Badge
                                     pill
                                     className="pulse"
                                     style={{
@@ -143,7 +122,7 @@ const CourseDetails = ({ course }) => {
                                     }}
                                 >
                                     السعر: {course.price} جنية
-                                </Badge>
+                                </Badge> */}
                                 <Badge
                                     pill
                                     style={{
@@ -178,8 +157,8 @@ const CourseDetails = ({ course }) => {
                                         className="w-100 mt-3 pulse"
                                         style={{
                                             padding: '12px',
-                                            backgroundColor: theme.accent,
-                                            borderColor: theme.accent
+                                            backgroundColor: theme.success,
+                                            borderColor: theme.success
                                         }}
                                         onClick={handleBooking}
                                     >
@@ -203,7 +182,7 @@ const CourseDetails = ({ course }) => {
                                                 e.currentTarget.style.backgroundColor = 'transparent';
                                             }}
                                         >
-                                            +02 01080290663
+                                            <span dir='ltr'>(+20)1112922085</span>
                                         </PrimaryButton>
                                     </div>
                                 </Card.Body>

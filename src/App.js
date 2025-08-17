@@ -13,6 +13,8 @@ import RegisterPage from './pages/RegisterPage';
 import ContactPage from './pages/ContactPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminCoursesPage from './pages/AdminCoursesPage';
+import ProgramsPage from './pages/ProgramsPage';
+import AdminProgramsPage from './pages/AdminProgramsPage';
 
 function App() {
   return (
@@ -24,16 +26,15 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/courses" element={
-                  <ProtectedRoute>
                     <CoursesPage />
-                  </ProtectedRoute>
                 } />
                 <Route path="/courses/:id" element={
-                  <ProtectedRoute>
                     <CourseDetailPage />
-                  </ProtectedRoute>
                 } />
-                <Route path="/admin-dashboard" element={
+                <Route path="/programs" element={
+                  <ProgramsPage />
+                } />
+                <Route path="/admin" element={
                   <ProtectedRoute adminOnly>
                     <AdminDashboard />
                   </ProtectedRoute>
@@ -48,20 +49,19 @@ function App() {
                     <AdminCoursesPage />
                   </ProtectedRoute>
                 } />
-                <Route path="/about" element={
-                  <ProtectedRoute>
-                    <AboutPage />
+                <Route path="/admin/programs" element={
+                  <ProtectedRoute adminOnly>
+                    <AdminProgramsPage />
                   </ProtectedRoute>
+                } />
+                <Route path="/about" element={
+                    <AboutPage />
                 } />
                 <Route path="/service" element={
-                  <ProtectedRoute>
                     <ServicePage />
-                  </ProtectedRoute>
                 } />
                 <Route path="/contact" element={
-                  <ProtectedRoute>
                     <ContactPage />
-                  </ProtectedRoute>
                 } />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />

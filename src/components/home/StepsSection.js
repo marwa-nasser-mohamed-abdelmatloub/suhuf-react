@@ -7,9 +7,11 @@ const StepsSection = () => {
     const [showVideo, setShowVideo] = useState(false);
 
     const steps = [
-        { icon: 'bi bi-hand-index-thumb', title: 'انقر فوق التسجيل عبر الإنترنت', text: 'ابدأ رحلتك بتسجيل سريع عبر الإنترنت وانضم إلى الأكاديمية بسهولة.' },
-        { icon: 'bi bi-calendar-event', title: 'اختر وقتًا للتجربة المجانية', text: 'حدد الوقت المناسب لك لبدء تجربة تعلم القرآن مجانًا مع أحد معلمينا.' },
-        { icon: 'bi bi-book', title: 'ابدأ رحلتك المقدسة مع أول درس', text: 'انطلق في تعلم القرآن مع معلمك وابدأ أولى خطواتك في هذه الرحلة المباركة.' },
+        {
+            icon: 'bi bi-hand-index-thumb', title: 'أرسل رسالة على واتساب للتسجيل', text: 'تواصل معنا مباشرة عبر الواتساب لإتمام التسجيل بسهولة.' },
+        { icon: 'bi bi-calendar-event', title: 'اختر وقتًا للتجربة المجانية', text: 'اختر اليوم والساعة التي تناسبك لبدء أول تجربة تعليمية لك.' },
+        {
+            icon: 'bi bi-book', title: 'إبدأ أول خطواتك لتعلم القرآن', text: 'انضم للحصة الأولى وابدأ رحلتك في تعلم القرآن.' },
     ];
 
     return (
@@ -17,7 +19,6 @@ const StepsSection = () => {
             <div className="container">
                 <div className="row align-items-center g-5">
 
-                    {/* الصورة مع الفيديو */}
                     <div className="col-lg-6 order-1 order-lg-0 position-relative d-flex justify-content-center">
                         <img src={girlPraying} alt="Learn Quran" className="img-fluid rounded shadow" />
                         <button
@@ -43,7 +44,6 @@ const StepsSection = () => {
                         </button>
                     </div>
 
-                    {/* النصوص */}
                     <div className="col-lg-6 order-0 order-lg-1">
                         <h6 className="mb-3" style={{ color: theme.primary, fontWeight: '700' }}>| خطوات التعلم</h6>
                         <h2 className="fw-bold mb-3" style={{ color: theme.text }}>
@@ -75,7 +75,6 @@ const StepsSection = () => {
                 </div>
             </div>
 
-            {/* نافذة الفيديو */}
             {showVideo && (
                 <div
                     className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
@@ -93,7 +92,6 @@ const StepsSection = () => {
             )}
 
             <style>{`
-                /* نبض زر الفيديو */
                 .video-btn { position: relative; overflow: visible; }
                 .video-pulse-outer {
                     position: absolute;
@@ -113,7 +111,6 @@ const StepsSection = () => {
                     100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
                 }
 
-                /* تصغير الزرار على الشاشات الصغيرة */
                 @media (max-width: 767.98px) {
                     .video-btn {
                         width: 60px !important;

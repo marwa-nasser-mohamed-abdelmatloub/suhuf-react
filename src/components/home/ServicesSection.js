@@ -5,28 +5,50 @@ const ServicesSection = () => {
     const theme = useTheme();
 
     const services = [
-        { icon: "bi-journal-text", title: "تلاوة القرآن الكريم", desc: "تعلم التلاوة الصحيحة مع أحكام التجويد بسهولة من المنزل." },
-        { icon: "bi-book", title: "نوراني القاعدة أونلاين", desc: "دروس تفاعلية لتعلم القاعدة النورانية للأطفال والكبار." },
-        { icon: "bi-laptop", title: "تعلم القرآن أونلاين", desc: "نوفر حصص أونلاين مباشرة مع المعلمين والمعلمات المؤهلين." },
-        { icon: "bi-translate", title: "ترجمة معاني القرآن", desc: "تعلم معاني القرآن الكريم بلغات مختلفة لفهم أعمق للآيات." },
-        { icon: "bi-journal-richtext", title: "القرآن بالتجويد", desc: "تعلم قراءة القرآن الكريم وفق أحكام التجويد الصحيحة." },
-        { icon: "bi-person-check", title: "معلمة قرآن للنساء", desc: "نوفر معلمات متخصصات لتعليم القرآن الكريم للنساء." },
+        {
+            icon: "bi-bullseye",
+            title: "برنامج الحفظ والمراجعة",
+            desc: "خطط منظمة لحفظ القرآن الكريم أو أجزائه، مع متابعة أسبوعية لضمان تثبيت الحفظ."
+        },
+        {
+            icon: "bi-laptop",
+            title: "حصص فردية أونلاين",
+            desc: "تعليم مخصص يناسب احتياجات الطالب، مع مرونة في تحديد المواعيد والمتابعة المباشرة."
+        },
+        {
+            icon: "bi-people",
+            title: "حصص جماعية تفاعلية",
+            desc: "مجموعات صغيرة لزيادة الحافز والتنافس، مع أنشطة وأساليب تفاعلية لتحفيز التعلم."
+        },
+        {
+            icon: "bi-book",
+            title: "برنامج التلاوة الصحيحة",
+            desc: "تعلم النطق السليم للآيات مع التطبيق العملي لأحكام التجويد، لتحسين الصوت وإتقان الأداء."
+        },
+        {
+            icon: "bi-pencil-square",
+            title: "برنامج القراءة من الصفر",
+            desc: "تأسيس المبتدئين على الحروف والمخارج والحركات حتى يتمكنوا من قراءة القرآن بطلاقة."
+        }
     ];
 
     return (
-        <section className="text-center py-5" style={{ direction: 'rtl', backgroundColor: theme.secondary }}>
+        <section className="text-center py-5" style={{ direction: 'rtl', backgroundColor: theme.light }}>
             <div className="container">
                 <h6 style={{ color: theme.primary }}>خدماتنا</h6>
                 <h2 className="fw-bold mb-3" style={{ color: theme.text }}>
                     أكاديمية القرآن للجميع
                 </h2>
                 <p className="mb-5 text-muted">
-                    نوفر مجموعة متكاملة من خدمات تعليم القرآن الكريم أونلاين مع معلمين ومعلمات محترفين.
+                    نوفر مجموعة متكاملة من برامج تعليم القرآن الكريم أونلاين مع معلمين ومعلمات محترفين.
                 </p>
 
                 <div className="row g-4">
                     {services.map((service, index) => (
-                        <div className="col-md-4 col-sm-6" key={index}>
+                        <div
+                            className={`col-md-6 col-sm-6 ${index === services.length - 1 ? "mx-auto" : ""}`}
+                            key={index}
+                        >
                             <div className="d-flex flex-column align-items-center p-3">
                                 <div
                                     className="rounded-circle d-flex justify-content-center align-items-center mb-3"

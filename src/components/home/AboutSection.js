@@ -13,13 +13,12 @@ const AboutSection = () => {
             <div className="container">
                 <div className="row align-items-center g-5">
 
-                    {/* النصوص */}
                     <div className="col-lg-6 text-center text-lg-end">
                         <h6 className="mb-3" style={{ color: theme.primary, fontSize: '22px', fontWeight: '700' }}>
                             <span style={{ color: theme.primary, marginLeft: '6px' }}>|</span> مـن نحن
                         </h6>
                         <h2 className="fw-bold mb-4" style={{ color: theme.text }}>
-                            أفضل أكاديمية لتعليم القرآن أونلاين
+                            أكاديمية لتعليم القرآن أونلاين
                         </h2>
                         <p className="text-muted mb-3">
                             نحن نقدم تعليم القرآن الكريم عن بُعد مع نخبة من المعلمين والمعلمات المؤهلين.
@@ -36,12 +35,12 @@ const AboutSection = () => {
                                 fontSize: '18px',
                                 borderRadius: '8px'
                             }}
+                            onClick={() => window.open('tel:201112922085')}
                         >
                             تواصل معنا
                         </PrimaryButton>
                     </div>
 
-                    {/* الصور */}
                     <div className="col-lg-6 position-relative d-flex justify-content-center align-items-center images-wrapper">
                         <img
                             src={about1}
@@ -54,7 +53,6 @@ const AboutSection = () => {
                             className="img-fluid rounded shadow position-absolute second-img"
                         />
 
-                        {/* زر الفيديو */}
                         <button
                             className="btn rounded-circle position-absolute shadow d-flex justify-content-center align-items-center video-pulse-btn"
                             style={{
@@ -81,7 +79,6 @@ const AboutSection = () => {
                 </div>
             </div>
 
-            {/* نافذة الفيديو */}
             {showVideo && (
                 <div
                     className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
@@ -116,7 +113,6 @@ const AboutSection = () => {
                     transition: 0.3s ease;
                 }
 
-                /* زر الفيديو دايمًا في النص بالنسبة للصورة الرئيسية */
                 .video-pulse-btn {
                     top: 50%;
                     left: 28%;
@@ -124,7 +120,6 @@ const AboutSection = () => {
                     transition: all 0.3s ease;
                 }
 
-                /* نبض زر الفيديو */
                 .video-pulse-outer {
                     position: absolute;
                     left: 50%;
@@ -143,7 +138,6 @@ const AboutSection = () => {
                     100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
                 }
 
-                /* تصغير الصور والزرار تدريجيًا بدون تغيير الشكل */
                 @media (max-width: 991.98px) {
                     .main-img { max-width: 55% !important; }
                     .second-img { max-width: 28% !important; top: 110px !important; left: 20px !important; }

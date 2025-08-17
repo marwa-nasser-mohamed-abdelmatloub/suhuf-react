@@ -10,11 +10,20 @@ const AboutAcademySection = () => {
     return (
         <section style={{ backgroundColor: theme.secondary, padding: '80px 0' }}>
             <Container>
-                <Row className="align-items-center mb-5 about-academy-row" data-aos="fade-up">
-                    <Col md={6} className="mb-4 mb-md-0 text-center" data-aos="fade-right">
-                        <Logo size="lg" className="mx-auto d-block floating" />
+                <Row className="align-items-end mb-5 about-academy-row" data-aos="fade-up">
+                    <Col
+                        md={6}
+                        className="mb-4 mb-md-0 about-academy-logo"
+                        data-aos="fade-right"
+                    >
+                        <Logo size="lg" className="floating" />
                     </Col>
-                    <Col md={6} className="about-academy-col text-md-end text-center" data-aos="fade-left" data-aos-delay="200">
+                    <Col
+                        md={6}
+                        className="about-academy-col text-md-end text-center"
+                        data-aos="fade-left"
+                        data-aos-delay="200"
+                    >
                         <h2
                             className="mb-4 d-inline-block"
                             style={{
@@ -24,7 +33,7 @@ const AboutAcademySection = () => {
                                 display: 'inline-block'
                             }}
                         >
-                            عن أكاديمية صحف
+                            رسالتنا
                             <span
                                 style={{
                                     position: 'absolute',
@@ -42,12 +51,11 @@ const AboutAcademySection = () => {
                             style={{
                                 lineHeight: '1.8',
                                 fontSize: '1.2rem',
+                                fontWeight: '600',
                                 color: theme.text
                             }}
                         >
-                            أكاديمية صحف هي منصة تعليمية متخصصة في تعليم القرآن الكريم وعلومه،
-                            نقدم كورسات متخصصة في التجويد، التلاوة، الحفظ، والفهم الصحيح للقرآن الكريم
-                            مع نخبة من المعلمين المؤهلين.
+                            في أكاديمية صحف ، نؤمن أن غرس حب القرآن في قلوب الأطفال هو استثمار أبدي. نقدم برامج تعليمية تجمع بين الأصالة والطرق الحديثة، لنربي جيلًا متمسكًا بكتاب الله.
                         </p>
                         <PrimaryButton
                             href="/courses"
@@ -57,16 +65,33 @@ const AboutAcademySection = () => {
                                 fontSize: '1.1rem'
                             }}
                         >
-                            اكتشف دورتنا
+                            اعرف أكثر عنّا
                         </PrimaryButton>
                     </Col>
                 </Row>
             </Container>
+
             <style>{`
+                @media (min-width: 992px) {
+                    .about-academy-logo {
+                        display: flex;
+                        justify-content: center;
+                        position: relative;
+                        left: 80px;
+                    }
+                }
+
                 @media (max-width: 991.98px) {
                     .about-academy-row {
                         justify-content: center !important;
                         text-align: center !important;
+                    }
+                    .about-academy-logo {
+                        display: flex;
+                        justify-content: center !important;
+                        position: static;
+                        left: auto;
+                        right: auto;
                     }
                     .about-academy-col {
                         text-align: center !important;

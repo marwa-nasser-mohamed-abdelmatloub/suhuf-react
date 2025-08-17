@@ -39,12 +39,12 @@ const Sidebar = () => {
             </h4>
             <Nav className="flex-column gap-2">
                 <Nav.Link
-                    href="/admin-dashboard"
+                    href="/admin"
                     style={{
                         color: theme.light,
                         padding: '10px 15px',
                         transition: 'all 0.3s',
-                        ...isActive('/admin-dashboard'),
+                        ...isActive('/admin'),
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -66,7 +66,22 @@ const Sidebar = () => {
                     }}
                 >
                     <i className="fas fa-book ms-2"></i>
-                    الكورسات
+                    الدورات
+                </Nav.Link>
+                <Nav.Link
+                    href="/admin/programs"
+                    style={{
+                        color: theme.light,
+                        padding: '10px 15px',
+                        transition: 'all 0.3s',
+                        ...isActive('/admin/programs'),
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    }}
+                >
+                    <i className="fas fa-book ms-2"></i>
+                    البرامج
                 </Nav.Link>
                 <Nav.Link
                     href="/admin/users"

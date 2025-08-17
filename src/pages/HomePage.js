@@ -4,11 +4,12 @@ import HeroSection from '../components/shared/HeroSection';
 import FeaturesSection from '../components/home/FeaturesSection';
 import ServicesSection from '../components/home/ServicesSection';
 import AboutSection from '../components/home/AboutSection';
-import StatsSection from '../components/home/StatsSection';
+// import StatsSection from '../components/home/StatsSection';
 import StepsSection from '../components/home/StepsSection';
 import AboutAcademySection from '../components/home/AboutAcademySection';
 import Start from '../components/home/Start';
 import Footer from '../components/shared/Footer';
+import ParentsFeedbackSection from '../components/home/ParentsFeedbackSection';
 
 const HomePage = () => {
     return (
@@ -25,8 +26,9 @@ const HomePage = () => {
             <FeaturesSection />
             <AboutSection />
             <ServicesSection />
-            <StatsSection />
+            {/* <StatsSection /> */}
             <StepsSection />
+            <ParentsFeedbackSection />
             <Start />
             <Footer />
 

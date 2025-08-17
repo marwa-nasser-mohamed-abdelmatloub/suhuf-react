@@ -26,13 +26,11 @@ const StatsSection = () => {
                 padding: '90px 0',
             }}
         >
-            {/* Overlay */}
             <div
                 className="position-absolute top-0 start-0 w-100 h-100"
                 style={{ backgroundColor: 'rgba(15, 85, 120, 0.7)', zIndex: 1 }}
             ></div>
 
-            {/* Content */}
             <div className="container position-relative" style={{ zIndex: 2 }}>
                 <div className="row justify-content-center">
                     {stats.map((stat, index) => (

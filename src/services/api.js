@@ -35,7 +35,6 @@ api.interceptors.response.use(
     }
 );
 
-// دوال الكورسات
 export const fetchCourses = async (search = '', level = '') => {
     try {
         const response = await api.get('/courses/', {
@@ -68,7 +67,7 @@ export const createCourse = async (courseData) => {
         return response.data;
     } catch (error) {
         if (error.response?.status === 400) {
-            throw new Error('بيانات الكورس غير صالحة');
+            throw new Error('بيانات الدورة غير صالحة');
         }
         throw error;
     }
@@ -80,7 +79,7 @@ export const updateCourse = async (id, courseData) => {
         return response.data;
     } catch (error) {
         if (error.response?.status === 400) {
-            throw new Error('بيانات الكورس غير صالحة');
+            throw new Error('بيانات الدورة غير صالحة');
         }
         throw error;
     }
@@ -94,7 +93,52 @@ export const deleteCourse = async (id) => {
     }
 };
 
-// دوال المستخدمين
+export const fetchPrograms = async (search = '') => {
+    try {
+        const response = await api.get('/programs/', {
+            params: { search }
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 0 || error.code === 'ERR_NETWORK') {
+            throw new Error('لا يمكن الاتصال بالخادم. يرجى التحقق من اتصال الشبكة.');
+        }
+        throw error;
+    }
+};
+
+export const createProgram = async (programData) => {
+    try {
+        const response = await api.post('/programs/', programData);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 400) {
+            throw new Error('بيانات البرنامج غير صالحة');
+        }
+        throw error;
+    }
+};
+
+export const updateProgram = async (id, programData) => {
+    try {
+        const response = await api.put(`/programs/${id}/`, programData);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 400) {
+            throw new Error('بيانات البرنامج غير صالحة');
+        }
+        throw error;
+    }
+};
+
+export const deleteProgram = async (id) => {
+    try {
+        await api.delete(`/programs/${id}/`);
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const fetchUsers = async (search = '', userType = '') => {
     try {
         const response = await api.get('/accounts/users/', {
@@ -141,7 +185,6 @@ export const deleteUser = async (id) => {
     }
 };
 
-// دوال المصادقة
 export const loginUser = async (credentials) => {
     try {
         const response = await api.post('/accounts/login/', credentials);
@@ -177,4 +220,25 @@ export const logoutUser = async () => {
     } finally {
         localStorage.removeItem('authToken');
     }
+};
+
+export const checkUsernameAvailability = async (username, id) => {
+    const params = { username };
+    if (id) params.id = id;
+    const response = await api.get('/accounts/check-username/', { params });
+    return response.data.available;
+};
+
+export const checkEmailAvailability = async (email, id) => {
+    const params = { email };
+    if (id) params.id = id;
+    const response = await api.get('/accounts/check-email/', { params });
+    return response.data.available;
+};
+
+export const checkPhoneAvailability = async (phone, id) => {
+    const params = { phone };
+    if (id) params.id = id;
+    const response = await api.get('/accounts/check-phone/', { params });
+    return response.data.available;
 };

@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useTheme } from './ThemeProvider';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import defaultBackground from '../../assets/images/sohof-background-image1.jpg';
-import secondBackground from '../../assets/images/sohof-background-image2.jpg';
+import heroBackground from '../../assets/images/mission.jpg'; 
 
-const BabyHeroSection = ({ title, subtitle, breadcrumb, children, background }) => {
+const BabyHeroSection = ({ title, subtitle, breadcrumb, children }) => {
     const theme = useTheme();
-    const [bgImage, setBgImage] = useState(background || defaultBackground);
-
-    useEffect(() => {
-        if (!background) {
-            const interval = setInterval(() => {
-                setBgImage(prev =>
-                    prev === defaultBackground ? secondBackground : defaultBackground
-                );
-            }, 5000);
-            return () => clearInterval(interval);
-        }
-    }, [background]);
 
     useEffect(() => {
         const hero = document.querySelector('.baby-hero-section');
@@ -37,37 +24,46 @@ const BabyHeroSection = ({ title, subtitle, breadcrumb, children, background }) 
         <div
             className="baby-hero-section py-5 position-relative overflow-hidden"
             style={{
-                color: theme.light,
-                backgroundImage: `linear-gradient(rgba(15, 85, 120, 0.85), rgba(15, 85, 120, 0.85)), url(${bgImage})`,
+                backgroundImage: `url(${heroBackground})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 direction: 'rtl',
-                minHeight: '40vh',
+                minHeight: '50vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                transition: 'background-image 1s ease-in-out'
             }}
         >
-            <Container>
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 1,
+                }}
+            />
+
+            <Container style={{ position: 'relative', zIndex: 2 }}>
                 <Row className="justify-content-center text-center">
                     <Col lg={10}>
-                        {/* العنوان الرئيسي */}
                         <h1
                             className="mb-4 floating"
                             style={{
                                 fontSize: '3rem',
                                 fontWeight: '700',
-                                textShadow: '2px 2px 8px rgba(0,0,0,0.3)',
-                                lineHeight: '1.3'
+                                color: theme.light,
+                                textShadow: '2px 2px 8px rgba(0,0,0,0.4)',
+                                lineHeight: '1.3',
                             }}
                         >
                             {title}
                         </h1>
 
-                        {/* النصوص الإضافية */}
                         {children && (
                             <div
                                 style={{
@@ -86,22 +82,24 @@ const BabyHeroSection = ({ title, subtitle, breadcrumb, children, background }) 
                             </div>
                         )}
 
-                        {/* breadcrumb اختيارية */}
                         {breadcrumb && (
                             <div
                                 className="mb-2"
                                 style={{
                                     fontSize: '1rem',
                                     color: theme.secondary,
-                                    textShadow: '1px 1px 4px rgba(0,0,0,0.3)'
+                                    textShadow: '1px 1px 4px rgba(0,0,0,0.3)',
                                 }}
                             >
-                                <Link to="/" style={{
-                                    color: theme.tertiary,
-                                    textDecoration: 'none',
-                                    fontWeight: 'bold',
-                                    marginLeft: '5px'
-                                }}>
+                                <Link
+                                    to="/"
+                                    style={{
+                                        color: theme.primary,
+                                        textDecoration: 'none',
+                                        fontWeight: 'bold',
+                                        marginLeft: '5px',
+                                    }}
+                                >
                                     الرئيسية
                                 </Link>
                                 / {breadcrumb}
@@ -119,13 +117,11 @@ BabyHeroSection.propTypes = {
     subtitle: PropTypes.string,
     breadcrumb: PropTypes.string,
     children: PropTypes.node,
-    background: PropTypes.string
 };
 
 BabyHeroSection.defaultProps = {
     subtitle: '',
     breadcrumb: '',
-    background: null
 };
 
 export default BabyHeroSection;

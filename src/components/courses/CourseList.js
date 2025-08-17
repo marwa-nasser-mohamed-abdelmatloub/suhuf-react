@@ -7,7 +7,7 @@ const CourseList = ({ courses }) => {
     return (
         <Container className="section fade-in">
             <AnimatedTitle level={2} className="text-center my-5" style={{ fontSize: '2.4rem', fontWeight: 900 }}>
-                كورساتنا التعليمية
+                دوراتنا التعليمية
             </AnimatedTitle>
             <Row>
                 {courses.map((course, idx) => (

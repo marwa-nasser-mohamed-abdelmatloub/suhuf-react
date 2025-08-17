@@ -1,12 +1,12 @@
 import React from 'react';
 import { Image } from 'react-bootstrap';
-import logo from '../../assets/images/sohof-logo.jpg';
+import logo from '../../assets/images/sohof-logo-removebg-preview.png';
 
 const Logo = ({ size = 'md' }) => {
     const sizes = {
-        sm: { width: 50, height: 50 },
-        md: { width: 100, height: 100 },
-        lg: { width: 150, height: 150 }
+        sm: { width: 100, height: 100 },
+        md: { width: 150, height: 150 },
+        lg: { width: 200, height: 200 }
     };
 
     return (
@@ -16,7 +16,7 @@ const Logo = ({ size = 'md' }) => {
             style={{
                 ...sizes[size],
                 objectFit: 'contain',
-                animation: 'pulse 2s infinite'
+                animation: 'pulse 2s infinite',
             }}
             className="logo"
         />

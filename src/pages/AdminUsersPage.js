@@ -40,7 +40,6 @@ const AdminUsersPage = () => {
 
     const handleUpdateUser = async (userData) => {
         try {
-            // Remove password and confirm_password before update
             const { password, confirm_password, ...updateData } = userData;
             await updateUser(userData.id, updateData);
             setSuccessMessage('تم تحديث المستخدم بنجاح');
@@ -93,18 +92,18 @@ const AdminUsersPage = () => {
                             </Col>
                             <Col xs={12} sm={6} md={3} className="mb-2 mb-md-0">
                                 <StatCard
-                                    title="عدد المدرسين"
+                                    title="عدد المعلمين"
                                     value={getUserTypeCount('teacher')}
                                     color={theme.info}
                                 />
                             </Col>
-                            <Col xs={12} sm={6} md={3} className="mb-2 mb-md-0">
+                            {/* <Col xs={12} sm={6} md={3} className="mb-2 mb-md-0">
                                 <StatCard
                                     title="مستخدمين آخرين"
                                     value={getUserTypeCount('other')}
                                     color={theme.warning}
                                 />
-                            </Col>
+                            </Col> */}
                         </Row>
 
                         {loading ? (

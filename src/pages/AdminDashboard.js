@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import StatCard from '../components/admin/StatCard';
 import Sidebar from '../components/admin/Sidebar';
-import { fetchCourses, fetchUsers } from '../services/api';
+import { fetchCourses, fetchPrograms, fetchUsers } from '../services/api';
 import { useTheme } from '../components/shared/ThemeProvider';
 import AdminNavbar from '../components/admin/AdminNavbar';
 
 const AdminDashboard = () => {
   const theme = useTheme();
   const [courses, setCourses] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -16,11 +17,13 @@ const AdminDashboard = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [coursesData, usersData] = await Promise.all([
+        const [coursesData, programsData, usersData] = await Promise.all([
           fetchCourses(),
+          fetchPrograms(),
           fetchUsers()
         ]);
         setCourses(coursesData);
+        setPrograms(programsData);
         setUsers(usersData);
         setError('');
       } catch (err) {
@@ -32,9 +35,9 @@ const AdminDashboard = () => {
     loadData();
   }, []);
 
-  const getLevelCount = (level) => {
-    return courses.filter(c => c.level === level).length;
-  };
+  // const getLevelCount = (level) => {
+  //   return courses.filter(c => c.level === level).length;
+  // };
 
   const getUserTypeCount = (type) => {
     if (type === 'student') return users.filter(u => u.is_student).length;
@@ -58,9 +61,16 @@ const AdminDashboard = () => {
           <Row className="mb-4 g-4">
             <Col md={3}>
               <StatCard
-                title="إجمالي الكورسات"
+                title="إجمالي الدورات"
                 value={courses.length}
                 color={theme.primary}
+              />
+            </Col>
+            <Col md={3}>
+              <StatCard
+                title="إجمالي اليرامج"
+                value={programs.length}
+                color={theme.tertiary}
               />
             </Col>
             <Col md={3}>
@@ -79,9 +89,9 @@ const AdminDashboard = () => {
             </Col>
             <Col md={3}>
               <StatCard
-                title="عدد المدرسين"
+                title="عدد المعلمين"
                 value={getUserTypeCount('teacher')}
-                color={theme.info}
+                color={theme.danger}
               />
             </Col>
           </Row>
@@ -93,7 +103,7 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <div className="mb-4">
-              <h4 className="mb-3" style={{ color: theme.primary }}>
+              {/* <h4 className="mb-3" style={{ color: theme.primary }}>
                 <i className="fas fa-chart-line ms-2"></i>
                 نظرة عامة
               </h4>
@@ -126,7 +136,7 @@ const AdminDashboard = () => {
                     color={theme.muted}
                   />
                 </Col>
-              </Row>
+              </Row> */}
             </div>
           )}
         </Container>

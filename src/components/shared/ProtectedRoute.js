@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     }
 
     if (isTeacher && window.location.pathname === '/') {
-        return <Navigate to="/admin-dashboard" replace />;
+        return <Navigate to="/admin" replace />;
     }
 
     return children;

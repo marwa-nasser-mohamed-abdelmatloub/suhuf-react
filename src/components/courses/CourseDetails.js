@@ -35,7 +35,7 @@ const CourseDetails = ({ course }) => {
     // };
 
     const handleBooking = () => {
-        window.open('https://wa.me/201112922085', '_blank');
+        window.open("https://wa.me/201080290663", "_blank");
     };
 
     if (!course) {

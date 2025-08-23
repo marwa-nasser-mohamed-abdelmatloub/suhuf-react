@@ -10,6 +10,7 @@ import review4 from "../../assets/images/review4.jpg";
 import review5 from "../../assets/images/review5.jpg";
 import review6 from "../../assets/images/review6.jpg";
 import review7 from "../../assets/images/review7.jpg";
+import AnimatedTitle from "../shared/AnimatedTitle";
 
 const testimonials = [
     { id: 1, image: review1, title: "تجربة تعليمية مميزة", feedback: "كانت الحصة ممتعة وهادفة، والأطفال استمتعوا كثيرًا بأجواء التعلم." },
@@ -49,12 +50,9 @@ const ParentsFeedbackSection = () => {
         }}
       >
         <Container>
-          <h2
-            className="text-center mb-5"
-            style={{ color: theme.primary, fontWeight: "bold" }}
-          >
+          <AnimatedTitle level={2}>
             آراء أولياء الأمور
-          </h2>
+          </AnimatedTitle>
 
           <div className="feedback-slider-wrapper">
             <Slider ref={sliderRef} {...settings}>
@@ -78,7 +76,7 @@ const ParentsFeedbackSection = () => {
                     <div
                       className="d-flex align-items-center justify-content-center mx-auto mb-3"
                       style={{
-                        width: "100%", 
+                        width: "100%",
                         maxWidth: "350px",
                         aspectRatio: "16/9",
                         overflow: "hidden",
@@ -92,7 +90,7 @@ const ParentsFeedbackSection = () => {
                         style={{
                           width: "100%",
                           height: "100%",
-                          objectFit: "cover", 
+                          objectFit: "fill",
                         }}
                       />
                     </div>

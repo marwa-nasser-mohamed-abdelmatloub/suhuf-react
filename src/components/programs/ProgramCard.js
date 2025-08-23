@@ -7,8 +7,8 @@ import AnimatedTitle from '../shared/AnimatedTitle';
 const ProgramCard = ({ program }) => {
     const theme = useTheme();
 
-    const handleJoinClick = () => {
-        window.open('tel:201080290663');
+  const handleJoinClick = () => {
+    window.open("https://wa.me/201080290663", "_blank");
     };
 
     return (

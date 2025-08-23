@@ -9,7 +9,7 @@ const CustomNavbar = () => {
 
   const navItems = [
     { label: "الرئيسية", path: "/" },
-    // { label: "اتصل بنا", path: "/contact" },
+    { label: "اتصل بنا", path: "/contact" },
     { label: "من نحن", path: "/about" },
     { label: "الخدمات", path: "/service" },
     { label: "الدورات", path: "/courses" },
@@ -49,16 +49,11 @@ const CustomNavbar = () => {
               >
                 <i className="bi bi-instagram"></i>
               </a>
-              <a
-                href="https://wa.me/201112922085"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-icon"
-              >
+              <a href="tel:201112922085" className="social-icon">
                 <i className="bi bi-telephone"></i>
               </a>
               <a
-                href="https://wa.me/201112922085"
+                href="https://wa.me/201080290663"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon"

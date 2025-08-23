@@ -1,56 +1,62 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useTheme } from '../shared/ThemeProvider';
 import heroImage from '../../assets/images/start.jpg';
+import AnimatedTitle from '../shared/AnimatedTitle';
 
 const Start = () => {
     const theme = useTheme();
-    const [showVideo, setShowVideo] = useState(false);
+    // const [showVideo, setShowVideo] = useState(false);
 
     return (
-        <section
-            className="hero-section d-flex align-items-center position-relative"
-            style={{
-                backgroundImage: `url(${heroImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                height: '60vh',
-                color: theme.light,
-                direction: 'rtl'
-            }}
+      <section
+        className="hero-section d-flex align-items-center position-relative"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "60vh",
+          color: theme.light,
+          direction: "rtl",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 1,
+          }}
+        ></div>
+
+        <Container
+          style={{
+            position: "relative",
+            zIndex: 2,
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-            <div
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    zIndex: 1
-                }}
-            ></div>
-
-            <Container
-                style={{
-                    position: 'relative',
-                    zIndex: 2,
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
+          <Row
+            className="align-items-center justify-content-center w-100"
+            style={{ maxWidth: "1200px" }}
+          >
+            <Col
+              xs={12}
+              md={6}
+              className="text-center text-md-end mb-4 mb-md-0"
             >
-                <Row
-                    className="align-items-center justify-content-center w-100"
-                    style={{ maxWidth: '1200px' }}
-                >
-                    <Col xs={12} md={6} className="text-center text-md-end mb-4 mb-md-0">
-                        <h1 className="fw-bold mb-4" style={{ fontSize: '3rem' }}>
-                            لنبدأ بتعلم القرآن الكريم <br /> عبر الإنترنت
-                        </h1>
-                    </Col>
-
+              <AnimatedTitle level={1} style={{ color: theme.light }}>
+                لنبدأ بتعلم القرآن الكريم <br />{" "}
+                <span className="text-center">عبر الإنترنت</span>
+              </AnimatedTitle>
+            </Col>
+            {/* 
                     <Col xs={12} md={6} className="d-flex justify-content-center justify-content-md-end">
                         <div className="video-btn-wrapper" style={{ marginTop: '20px' }}>
                             <button
@@ -77,10 +83,10 @@ const Start = () => {
                                 }}></i>
                             </button>
                         </div>
-                    </Col>
-                </Row>
-            </Container>
-
+                    </Col> */}
+          </Row>
+        </Container>
+        {/* 
             {showVideo && (
                 <div
                     className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
@@ -97,8 +103,8 @@ const Start = () => {
                         ></iframe>
                     </div>
                 </div>
-            )}
-
+            )} */}
+        {/* 
             <style>{`
                 .video-pulse-btn {
                     position: relative;
@@ -143,8 +149,8 @@ const Start = () => {
                         margin-top: 40px !important;
                     }
                 }
-            `}</style>
-        </section>
+            `}</style> */}
+      </section>
     );
 };
 

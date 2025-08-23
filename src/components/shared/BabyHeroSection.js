@@ -94,7 +94,7 @@ const BabyHeroSection = ({ title, subtitle, breadcrumb, children }) => {
                                 <Link
                                     to="/"
                                     style={{
-                                        color: theme.primary,
+                                        color: theme.success,
                                         textDecoration: 'none',
                                         fontWeight: 'bold',
                                         marginLeft: '5px',
